@@ -1,0 +1,168 @@
+/*----------------------------------------------
+- ITEM VIEWER
+---------------------------------------------*/
+.itemview-box {
+    display:block;
+    @include innerBox();
+    border-top:1px solid rgba(255, 255, 255, 0.24);
+    width:760px;
+    height:520px;
+    background-color:#6e767f;
+    padding:$paddingGeneral;
+    pointer-events:all;
+    position:relative;
+
+    //Center me
+    margin:0 auto;
+}
+
+//Columns
+.itemview-column {
+    width:350px;
+    display:inline-block;
+    //border:1px solid #cc0000;
+    @include innerBox();
+    vertical-align:top;
+
+    &.left {
+        margin-right:$paddingGeneral;
+    }
+
+     &.full {
+        width:720px;
+    }
+}
+
+/*----------------------------------------------
+- ITEM VIEWER - HEADER
+---------------------------------------------*/
+.itemview-header {
+    display:table;
+    height:63px;
+
+    //Links to profile
+    a {
+        display:inline-block;
+        vertical-align:middle;
+        pointer-events:all;
+    }
+}
+
+
+//Avatar
+.itemview-avatar {
+    width:53px;
+    height:53px;
+    background-size:cover;
+    display:inline-block;
+    margin-right:10px;
+}
+
+
+//Username
+.itemview-username {
+    display:inline-block;
+    font-size:25px;
+    font-weight:bold;
+    color:#fff;
+    vertical-align:middle;
+    display:table-cell;
+    padding-bottom:5px; //align better
+    max-width:620px;
+    word-wrap:nowrap;
+    overflow:hidden;
+}
+
+
+/*----------------------------------------------
+- ITEM VIEWER - IMAGE AREA
+---------------------------------------------*/
+
+//Main Image
+.itemview-image {
+    width:350px;
+    height:350px;
+    background-size:cover;
+    display:block;
+    pointer-events:all;
+    margin-bottom:15px;
+    position:relative;
+
+    //Photo tag area
+    .itemview-photo-tag {
+        position:absolute;
+        height:34px;
+        top:0;
+        left:0;
+        width:100%;
+        background-color:rgba(54, 54, 54, 0.74);
+        display:table;
+
+        .item-content-icon {
+            //padding-right:8px;
+            padding-left:10px;
+            width:23px;
+            height:21px;
+        }
+
+        .itemview-photo-tag-name {
+            padding-left:10px;
+            padding-bottom:2px;
+        }
+
+        &.hidden { display:none; }
+    }
+
+
+}
+
+
+
+
+/*----------------------------------------------
+- ITEM VIEWER - INFO BAR
+---------------------------------------------*/
+.itemview-info {
+    width:350px;
+    height:44px;
+    margin-bottom:10px;
+    background-color:rgba(54, 54, 54, 0.6);
+    display:table;
+    @include innerBox();
+}
+
+.itemview-comments {
+    @include innerBox();
+    padding:14px 16px;
+    width:350px;
+    height:296px;
+    background-color:rgba(70, 70, 70, 0.9);
+    display:block;
+    @include innerBox();
+    overflow:auto;
+    pointer-events: all;
+    word-wrap: break-word;
+
+
+    .itemview-caption {
+        margin-top:10px;
+        padding:12px;
+        background-color: rgba(54, 54, 54, 0.8);
+        font-size:14px;
+        color:#abb9b8;
+
+        //These have alternative weird names so they don't get replace with our text searches
+        .highlight-purple,._h004 { color:$purple; }
+        .highlight-pink,._h003 { color:$pink; }
+        .highlight-green,._h002 { color:$green; }
+        .highlight-blue,._h001 { color:$blue; }
+
+
+        .itemview-caption-date {
+            color:#fff;
+            margin-bottom:11px;
+            margin-top:4px;
+        }
+    }
+}
+

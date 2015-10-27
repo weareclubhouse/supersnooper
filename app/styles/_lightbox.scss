@@ -1,0 +1,49 @@
+/*----------------------------------------------
+- LIGHTBOX
+---------------------------------------------*/
+
+
+.lightbox-container {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:100;
+    display:block;
+}
+
+.lightbox-fill {
+    background-color:rgba(0, 0, 0, 0.74);
+    width:100%;
+    height:100%;
+    position:absolute;
+    top:0;
+    left:0;
+    display:block;
+    pointer:cursor;
+
+}
+
+.lightbox-content-wrapper {
+    position:absolute;
+    display:table;
+    height:100%;
+    width:100%;
+    pointer-events:none;
+}
+
+.lightbox-content {
+    display:table-cell;
+    vertical-align: middle;
+    z-index:101;
+
+    //Transition
+    transition: all 0.4s ease-in-out;
+    opacity:0;
+
+    &.open {
+        opacity:1;
+    }
+}
+

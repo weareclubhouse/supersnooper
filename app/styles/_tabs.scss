@@ -1,0 +1,43 @@
+.tab__wrapper {
+    padding-bottom:20px;
+    width:50%;
+}
+
+.tab__bar {
+    display:table;
+    width:100%;
+    margin-bottom:3px;
+    height:43px;
+    overflow:hidden;
+    background-color: rgba(159, 159, 159, 0.3);
+    padding:0 $paddingGeneral;
+    overflow:hidden;
+    text-align:left;
+
+    &__item {
+        width:20%;
+        display:table-cell;
+        vertical-align: middle;
+
+        &__title {
+            display:inline-block;
+            width:40px;
+
+        }
+
+        &__option {
+            display:inline-block;
+            font-weight:bold;
+            padding-left:30px;
+
+            &--selected-blue {
+                color:$blueAlt;
+            }
+
+            &--selected-green {
+                color:$green;
+            }
+        }
+    }
+
+}

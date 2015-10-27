@@ -1,0 +1,23 @@
+/*----------------------------------------------
+- MAIN APPLICATION SCSS
+---------------------------------------------*/
+
+// bower:scss
+// endbower
+
+
+//Variables
+@import "variables";
+@import "mixins";
+
+//Main Files
+@import "base";
+@import "form";
+@import "lightbox";
+@import "itemview";
+@import "buttons";
+@import "header";
+@import "loader-circles";
+@import "icons";
+@import "tabs";
+@import "results";

@@ -1,0 +1,114 @@
+//--------------------------------------------------------------------------
+// INNBOX FOR SIZING
+//--------------------------------------------------------------------------
+@mixin innerBox() {
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+  	box-sizing: border-box;
+}
+
+
+//--------------------------------------------------------------------------
+// ROUNDED CORNERS
+//--------------------------------------------------------------------------
+@mixin roundedEdges($_size) {
+  //Borders
+	-moz-border-radius: $_size;
+  -webkit-border-radius: $_size;
+  border-radius: $_size;
+}
+
+
+@mixin backgroundRGBAlpha($_colour, $_alpha) {
+  background-color:rgba(nth($_colour, 1), nth($_colour, 2), nth($_colour, 3), $_alpha);
+}
+
+/*
+@mixin transition($transition-property, $transition-time, $method) {
+    -webkit-transition: $transition-property $transition-time $method;
+    -moz-transition: $transition-property $transition-time $method;
+    -ms-transition: $transition-property $transition-time $method;
+    -o-transition: $transition-property $transition-time $method;
+    transition: $transition-property $transition-time $method;
+}
+*/
+
+
+//--------------------------------------------------------------------------
+// TRANSITIONS
+//--------------------------------------------------------------------------
+@mixin transition($transition...) {
+  -webkit-transition:    $transition;
+  -moz-transition:    $transition;
+  -o-transition:      $transition;
+  -webkit-transition: $transition;
+  transition:         $transition;
+
+  //Accelerate!
+  -webkit-transform: translate3d(0, 0, 0);
+
+  //Other acceleration options
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000;
+}
+
+
+
+//--------------------------------------------------------------------------
+// HOVER EFFECT
+//--------------------------------------------------------------------------
+@mixin hoverEffect($_alpha, $_properties...) {
+  //Default transitions
+  @if length($_properties) < 1 {
+    $_properties : opacity 0.7s ease-in-out;
+  }
+
+  //Hover
+  &:hover { opacity:$_alpha; }
+
+  //Transitions
+  @include transition($_properties);
+}
+
+
+//--------------------------------------------------------------------------
+// ICON SET
+//--------------------------------------------------------------------------
+@mixin icons() {
+  //Generic Icons
+  &.icon-beer { background-image:url('../images/_generic/icon-beer.png');}
+  &.icon-bike { background-image:url('../images/_generic/icon-bike.png');}
+  &.icon-close { background-image:url('../images/_generic/icon-close.png');}
+  &.icon-cocktail { background-image:url('../images/_generic/icon-cocktail.png'); }
+  &.icon-face { background-image:url('../images/_generic/icon-face.png'); }
+  &.icon-facebook { background-image:url('../images/_generic/icon-facebook.png'); }
+  &.icon-google { background-image:url('../images/_generic/icon-google.png'); }
+  &.icon-heart { background-image:url('../images/_generic/icon-heart.png');}
+  &.icon-home { background-image:url('../images/_generic/icon-home.png');}
+  &.icon-link { background-image:url('../images/_generic/icon-link.png');}
+  &.icon-mail { background-image:url('../images/_generic/icon-mail.png');}
+  &.icon-megaphone { background-image:url('../images/_generic/icon-megaphone.png');}
+  &.icon-menu { background-image:url('../images/_generic/icon-menu.png');}
+  &.icon-pencil-large { background-image:url('../images/_generic/icon-pencil-large.png'); }
+  &.icon-pencil { background-image:url('../images/_generic/icon-pencil.png'); }
+  &.icon-people { background-image:url('../images/_generic/icon-people.png');}
+  &.icon-pizza { background-image:url('../images/_generic/icon-pizza.png'); }
+  &.icon-post { background-image:url('../images/_generic/icon-post.png'); }
+  &.icon-secret { background-image:url('../images/_generic/icon-secret.png');}
+  &.icon-speech { background-image:url('../images/_generic/icon-speech.png'); }
+  &.icon-star { background-image:url('../images/_generic/icon-star.png'); }
+  &.icon-thumb { background-image:url('../images/_generic/icon-thumb.png'); }
+  &.icon-tick { background-image:url('../images/_generic/icon-tick.png'); }
+  &.icon-tilde { background-image:url('../images/_generic/icon-tilde.png'); }
+  &.icon-twitter { background-image:url('../images/_generic/icon-twitter.png'); }
+
+
+  //Menu Specific
+  &.icon-menu-cocktail { background-image:url('../images/_generic/icon-menu-cocktail.png'); } //not used
+  &.icon-menu-speech { background-image:url('../images/_generic/icon-menu-speech.png'); }
+  &.icon-menu-face { background-image:url('../images/_generic/icon-menu-face.png'); }
+  &.icon-menu-home { background-image:url('../images/_generic/icon-menu-home.png'); }
+  &.icon-menu-pencil { background-image:url('../images/_generic/icon-menu-pencil.png'); }
+  &.icon-menu-post { background-image:url('../images/_generic/icon-menu-post.png'); }
+
+}

@@ -1,0 +1,95 @@
+/*----------------------------------------------
+- BODY, HTML
+---------------------------------------------*/
+body {
+  	background: #fafafa;
+  	color: #fff;
+  	width:100%;
+  	height:100%;
+  	background-image:url(../images/background.jpg);
+    background-attachment: fixed;
+  	margin:0;
+  	min-width:640px;
+
+    //Font base
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-variant: normal;
+    //letter-spacing: -0.5px;
+
+    //Nicer Text Rendering
+    text-rendering: optimizeLegibility;
+    text-rendering: geometricPrecision;
+    font-smooth: always;
+    font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    -webkit-font-smoothing: antialiased;
+    //-webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    //Scroll locking
+    &.scroll-locked { overflow:hidden !important; }
+}
+
+//Full size HTML
+html {
+  	width:100%;
+  	height:100%;
+}
+
+//Borders off oon images
+img {
+	border:0;
+}
+
+//Default a styling
+a, a:hover, a:link, a:visited {
+  color:#fff;
+  text-decoration: none;
+}
+
+//Is this needed with the body tag?
+p,input {
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-variant: normal;
+}
+
+
+/*----------------------------------------------
+- BROWSER ERROR
+---------------------------------------------*/
+.browsehappy {
+  	margin: 0.2em 0;
+  	background: #ccc;
+  	color: #000;
+  	padding: 0.2em 0;
+}
+
+
+
+/*----------------------------------------------
+- CONTENT AREA
+---------------------------------------------*/
+.wrapper {
+    width:100%;
+    margin:175px 0 50px 0;
+}
+
+
+.content-column {
+    text-align:center;
+    margin:0 auto;
+    max-width:1590px; //8 columns!
+
+    //Change column widths below certain screen res
+    @media (max-width: 1960px) { max-width:1390px; }
+    @media (max-width: 1680px) { max-width:1190px; }
+    @media (max-width: 1300px) { max-width:990px; }
+    @media (max-width: 1100px) { max-width:790px; }
+    @media (max-width: 900px) { max-width:590px; }
+    @media (max-width: 700px) { max-width:390px; }
+    //@media (max-width: 500px) { max-width:190px; }
+}
