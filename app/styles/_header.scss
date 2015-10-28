@@ -18,10 +18,7 @@
     height:$headerHeight;
     display:table;
     position:relative;
-
-    //Background
-    background-image:url(../images/background-header.png);
-    background-size:100% $headerHeight;
+    background-color:#fff;
 
     //Appear above the search
     z-index:101;
@@ -52,14 +49,15 @@
     display:table;
     width:100%;
     z-index:100;
+    color:#fff;
     @include innerBox();
     border-top:1px solid rgba(255, 255, 255, 0.24);
     //height:120px;
     background-color:$red;
     padding:0;
     pointer-events:none;
-    position:relative;
-    top:0;
+    position:fixed;
+    bottom:0;
     left:0;
     opacity:1;
     height:$headerHeight;
@@ -85,10 +83,8 @@
     //Hidden off screen
     &.hidden {
         opacity:0;
-        top:-$headerHeight;
+        bottom:-$headerHeight;
     }
-
-
 
     //Label (main search title)
     &__label {

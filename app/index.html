@@ -49,11 +49,14 @@
     <!--Header-->
     <header>
         <div class="header__wrapper">
+
+            <!--Credits and Logo-->
         	<div class="header__top">
         		<div class="header__logo header__logo--snooper"><strong>Super</strong>Snooper</div>
         		<div class="header__logo header__logo--clubhouse">A project by <a href="http://weareclubhouse.com"><strong>Clubhouse Studios</strong></a></div>
         	</div>
 
+            <!--Search Bar-->
             <div class="header__search hidden">
                 <div class="header__search__column header__search__label"></div>
                 <div class="header__search__column header__search__column--right header__search__info">
@@ -175,9 +178,9 @@
         <!--Template 'ITEM RESULTS'-->
         <script id="item-template" type="text/x-handlebars-template">
             <a href="#" data-id="" class='result-item-wrapper' id="item{{id}}">
-                <div class="result-item" data-date="{{date}}">
+                <div class="result-item" data-date="{{date}}"  style="background-image:url({{image}});">
                     <div class="result-item__header {{highlight-header}}"><div class="item-content item-title">{{title}}</div></div>
-                    <div class="result-item__body" style="background-image:url({{image}});"></div>
+                    <!--<div class="result-item__body"></div>-->
                     <div class="result-item__footer {{highlight-footer}}">
                         <div class="item-content">
                             <div class="item-content-table">

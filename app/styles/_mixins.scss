@@ -72,6 +72,13 @@
 
 
 //--------------------------------------------------------------------------
+// COLUMNS
+//--------------------------------------------------------------------------
+@mixin widthInColumns($_count, $_width, $_spacing) {
+  max-width:$_count * ($_width + $_spacing);
+}
+
+//--------------------------------------------------------------------------
 // ICON SET
 //--------------------------------------------------------------------------
 @mixin icons() {
@@ -102,7 +109,6 @@
   &.icon-tilde { background-image:url('../images/_generic/icon-tilde.png'); }
   &.icon-twitter { background-image:url('../images/_generic/icon-twitter.png'); }
 
-
   //Menu Specific
   &.icon-menu-cocktail { background-image:url('../images/_generic/icon-menu-cocktail.png'); } //not used
   &.icon-menu-speech { background-image:url('../images/_generic/icon-menu-speech.png'); }
@@ -110,5 +116,4 @@
   &.icon-menu-home { background-image:url('../images/_generic/icon-menu-home.png'); }
   &.icon-menu-pencil { background-image:url('../images/_generic/icon-menu-pencil.png'); }
   &.icon-menu-post { background-image:url('../images/_generic/icon-menu-post.png'); }
-
 }

@@ -341,8 +341,10 @@ SuperSnooper.DisplayManager.prototype.createIsotopeGroup = function(_id) {
         //LAYOUT
         masonry: {
             //isFitWidth: true
-            columnWidth: 190,
-            gutter: 10
+            columnWidth: 334, //item size is 332
+            rowHeight: 334, //item size is 332
+
+            gutter: 0
         },
 
        hiddenStyle: {

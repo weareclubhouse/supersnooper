@@ -36,7 +36,7 @@ SuperSnooper.FormManager = function() {
 
     //Dummy Search Trigger
     if(SuperSnooper.DEBUG_MODE) {
-        this.keywords = [{master:'thirsty', variants:[]}]; //green,vert,verte||rouge,red||blue||yellow||black||white';
+        this.keywords = [{master:'doom', variants:[]}]; //green,vert,verte||rouge,red||blue||yellow||black||white';
         $('input#users').val('@gregfindon');
         $('input#tags').val('');
         this.searchInit();
