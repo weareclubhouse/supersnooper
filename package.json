@@ -30,5 +30,7 @@
   "engines": {
     "node": ">=0.10.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "grunt-includes": "^0.5.1"
+  }
 }

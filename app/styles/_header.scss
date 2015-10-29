@@ -19,25 +19,41 @@
     display:table;
     position:relative;
     background-color:#fff;
+    text-transform: uppercase;
+
 
     //Appear above the search
     z-index:101;
 
     //Logos
     .header__logo {
-        padding:0 40px;
+        padding:$headerMargin;
+        @include innerBox();
         display:table-cell;
-        vertical-align:middle;
+        vertical-align:top;
         a { pointer-events:all; }
         a:hover { color:$blue; }
+        height:$headerHeight;
+        overflow:hidden;
     }
 
     .header__logo--snooper {
-        font-size: 25px;
+        background-image:url(../images/icon-logo.svg);
+        background-size:234px 15px;
+        background-repeat:no-repeat;
+        background-position:center;
+        width:334px;
+        display:block;
     }
 
     .header__logo--clubhouse {
         text-align:right;
+        font-size:10.5px;
+
+        //Link medium sized
+        a, a:visited, a:active, a:link, a:hover {
+            @include fontFace('medium');
+        }
     }
 }
 

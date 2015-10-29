@@ -1,0 +1,43 @@
+<!--Form-->
+<div class="search-form-holder content-column">
+    <form class='search-form' id='search-form'>
+        <!--Main Search-->
+        <div class="search-form__row search-form__row--main">
+            <div class='search-form-main__row'>
+                <div class='search-form-main__item search-form-main__item--left'>
+                    <div class="input-icon">@</div><!--
+                    --><div class='input-field'><input type='text' name='users' id='users' placeholder='Add up to 5 usernames' value="" class='input-text input-text--blue-border'/></div>
+                </div>
+                <div class='search-form-main__item search-form-main__item--right'>
+                    <div class="input-icon input-icon--padded-extra">#</div><!--
+                    --><input type='text' name='tags' id='tags' placeholder='Add up to 5 hashtags' value="" class='input-text input-text--blue-border'/>
+                </div>
+
+            </div>
+            <div class='search-form-main__row search-form-main__row--mentions '>
+                <input type="radio" name="name-search-type" id="owned" value="owned" checked><label for="owned">Owned Photos</label>
+                <input type="radio" name="name-search-type" id="mentions" value="mentions"><label for="mentions">@Mentions</label>
+            </div>
+        </div>
+
+        <!--Keywords-->
+        <div class="search-form__row search-form__row--keywords">
+            <div class="search-keywords-wrapper">
+                <span>
+                    <span class='keywords-text-big'>Keywords to highlight: </span>
+                    <span id='keywords-counts'></span>
+                </span>
+
+            </div>
+            <div class="search-keywords-wrapper">
+                <div class="button edit right" id="button-edit-keywords">EDIT</div>
+            </div>
+        </div>
+
+        <!--Submit-->
+        <div class="search-form__row search-form__row--footer">
+            <div class="button export left inactive" id="button-data-export">EXPORT DATA</div>
+            <input type='submit' class="button search right" value='SUBMIT'/>
+        </div>
+    </form>
+</div>

@@ -1,3 +1,80 @@
+/*----------------------------------------------
+- SEARCH FORM NEW
+---------------------------------------------*/
+
+.search-form {
+    text-align:left;
+    margin:0 auto 120px auto;
+    display:block;
+    width:100%;
+
+    //Columns
+    &__column {
+        display:inline-block;
+        max-width:33%;
+        text-align: left;
+
+        //Space between items
+        padding-right:30px;
+        white-space: nowrap;
+        overflow:hidden;
+
+
+        @include innerBox();
+        &:last-of-type { max-width:34%; padding-right:0; }
+
+        //Icons
+        &__icon {
+            display:inline-block;
+            height:28px;
+            width:28px; //change based on icon type
+            background-size:auto 100%;
+            background-position:left center;
+            background-repeat:no-repeat;
+
+            //Variations
+            &--names { background-image:url(../images/icon-at.svg); height:29px }
+            &--tags { background-image:url(../images/icon-hashtag.svg); }
+            &--keywords { background-image:url(../images/icon-pen.svg); }
+
+        }
+
+        &__input {
+            //Wrapping
+            padding:0 1px; //without this you get some weird clippig on focus
+            white-space: nowrap;
+            overflow:hidden;
+            text-overflow: ellipsis;
+            margin-left:10px;
+            font-size:14px;
+            text-transform: uppercase;
+
+            &:focus {
+                //back to clipping so we can see it all, reset the offset...
+               text-overflow: clip;
+
+            }
+
+            width:auto;
+            min-width:30px;
+            max-width:calc(100% - 43px); //30px for the icon and then 10px for the margin
+            display:inline-block;
+            outline:0;
+            position:relative;
+            top:-4px;
+            left:0;
+            color:#222;
+            font-size:14px;
+
+            &--default {
+                color:#aaa;
+            }
+        }
+
+
+    }
+}
+
 
 /*----------------------------------------------
 - SEARCH FORM
@@ -8,11 +85,19 @@
     margin:0 auto;
 }
 
+//Hide the old one for now
+#search-form {
+    display:none;
+}
+
+/*
 .search-form {
     max-width:796px;
     text-align:center;
     margin:0 auto 120px auto;
-}
+}*/
+
+
 
 //Rows on form
 .search-form__row {
@@ -94,6 +179,7 @@
 /*----------------------------------------------
 - INPUT FIELDS ACROSS WHOLE SITE
 ---------------------------------------------*/
+/*
 input {
     //Inner Box
     @include innerBox();
@@ -137,7 +223,7 @@ input {
         color:#fff;
         padding-top:0px !important; //remove the padding that gets added by button classes
     }
-}
+}*/
 
 /*----------------------------------------------
 - CUSTOM RADIO

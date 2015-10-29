@@ -13,20 +13,20 @@ body {
 
     //Font base
     font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Geneva, Verdana, sans-serif;
+    @include fontFace('regular');
     font-size: 14px;
     font-style: normal;
     font-variant: normal;
     //letter-spacing: -0.5px;
 
-    //Nicer Text Rendering
-    text-rendering: optimizeLegibility;
+    //Nicer Text Rendering - this looks worse on Brandon?
+    /*text-rendering: optimizeLegibility;
     text-rendering: geometricPrecision;
     font-smooth: always;
     font-smoothing: antialiased;
     -moz-font-smoothing: antialiased;
     -webkit-font-smoothing: antialiased;
-    //-webkit-font-smoothing: subpixel-antialiased; //bit too pixely
-    -moz-osx-font-smoothing: grayscale;
+    -moz-osx-font-smoothing: grayscale;*/
 
     //Scroll locking
     &.scroll-locked { overflow:hidden !important; }
@@ -45,7 +45,7 @@ img {
 
 //Default a styling
 a, a:hover, a:link, a:visited {
-  color:#fff;
+  color:#000;
   text-decoration: none;
 }
 
@@ -55,6 +55,22 @@ p,input {
     font-size: 14px;
     font-style: normal;
     font-variant: normal;
+}
+
+
+/*----------------------------------------------
+- TABLE CELL BITS
+---------------------------------------------*/
+.table-cell {
+    display:table-cell;
+    vertical-align: middle;
+    &--vt { vertical-align: top; }
+    &--vb { vertical-align: bottom; }
+
+}
+
+.table {
+    display:table;
 }
 
 
@@ -79,6 +95,8 @@ p,input {
 }
 
 
+
+//Columns
 .content-column {
     text-align:center;
     margin:0 auto;
@@ -87,12 +105,16 @@ p,input {
     @include widthInColumns(6, $resultItemSize, $resultItemMargin);
 
     //Change column widths below certain screen res
-    @media (max-width: 2260px) { @include widthInColumns(5, $resultItemSize, $resultItemMargin); }
-    @media (max-width: 1960px) { @include widthInColumns(4, $resultItemSize, $resultItemMargin); }
-    @media (max-width: 1600px) { @include widthInColumns(3, $resultItemSize, $resultItemMargin); }
-    //@media (max-width: 1300px) { @include widthInColumns(3, $resultItemSize, $resultItemMargin); }
+    @media (max-width: 2102px) { @include widthInColumns(5, $resultItemSize, $resultItemMargin); }
+    @media (max-width: 1768px) { @include widthInColumns(4, $resultItemSize, $resultItemMargin); }
+    @media (max-width: 1434px) { @include widthInColumns(3, $resultItemSize, $resultItemMargin); }
     @media (max-width: 1100px) { @include widthInColumns(2, $resultItemSize, $resultItemMargin); }
+    @media (max-width: 766px) { @include widthInColumns(1, $resultItemSize, $resultItemMargin); }
+    //@media (max-width: 1960px) { @include widthInColumns(4, $resultItemSize, $resultItemMargin); }
+    //@media (max-width: 1600px) { @include widthInColumns(3, $resultItemSize, $resultItemMargin); }
+    //@media (max-width: 1300px) { @include widthInColumns(3, $resultItemSize, $resultItemMargin); }
+    //@media (max-width: 1100px) { @include widthInColumns(2, $resultItemSize, $resultItemMargin); }
     //@media (max-width: 900px) { max-width:590px; }
-    @media (max-width: 700px) { @include widthInColumns(1, $resultItemSize, $resultItemMargin); }
+    //@media (max-width: 700px) { @include widthInColumns(1, $resultItemSize, $resultItemMargin); }
     //@media (max-width: 500px) { max-width:190px; }
 }

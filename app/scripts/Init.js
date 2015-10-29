@@ -12,20 +12,20 @@
 //--------------------------------------------------------------------------
 'use strict';
 
+
 //--------------------------------------------------------------------------
 //  VARIABLES
 //--------------------------------------------------------------------------
-var SuperSnooper = SuperSnooper || {Templates:{}, Signals:{}}; //init the main prototype
+var SuperSnooper = SuperSnooper || {Templates:{}, Signals:{}, Modules:{}, Utilities:{}}; //init the main prototype
 var app; //reference to our base class
+
 
 //--------------------------------------------------------------------------
 //  MAIN CLASS
 //--------------------------------------------------------------------------
 SuperSnooper.Init = function() {
     //Console Fix
-    if(typeof console === 'undefined') {
-        console = { log: function() {} };
-    }
+    if(typeof console === 'undefined') { console = { log: function() {} }; }
 
     //Init
     this.application = new SuperSnooper.Site();

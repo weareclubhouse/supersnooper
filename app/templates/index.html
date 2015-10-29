@@ -1,0 +1,27 @@
+<!doctype html>
+<html class="no-js">
+    include "page-header.html"
+  <body>
+    <!--[if lt IE 10]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    include "content-header.html"
+
+    <!--Page-->
+    <div class='content'>
+        <div class="wrapper" id='main-wrapper'>
+            include "content-form-new.html"
+            include "content-form.html"
+            include "content-results.html"
+            include "content-loader.html"
+        </div>
+    </div>
+
+    <!--Javascript-->
+    include "_js/vendor.html"
+    include "_js/app.html"
+    include "_js/handlebars.html"
+    include "_js/analytics.html"
+</body>
+</html>

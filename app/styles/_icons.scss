@@ -5,7 +5,7 @@
    //Default
    display:inline-block;
    background-size:100% 100%;
-   background-position:right center;
+   background-position:right center; //why right?
    background-repeat:no-repeat;
    width:100%;
    height:100%;
@@ -13,10 +13,15 @@
 
 
    //Images
-   &.icon-comments { background-image:url(../images/icon-comments.svg); }
-   &.icon-tag { background-image:url(../images/icon-tag.svg);  }
-   &.icon-likes { background-image:url(../images/icon-likes.svg); }
-   &.icon-circle { background-image:url(../images/icon-circle.svg); }
+   &--comments { background-image:url(../images/icon-comments.svg); } //used on results item and full info
+   &--likes { background-image:url(../images/icon-likes.svg); } //used on results item and full info
+   &--plus { background-image:url(../images/icon-plus.svg); } //rollover state on result items
+
+   //Unused
+   &--tag { background-image:url(../images/icon-tag.svg);  }
+   &--circle { background-image:url(../images/icon-circle.svg); }
+   &--hashtag { background-image:url(../images/icon-hashtag.svg); }
+   &--pen { background-image:url(../images/icon-pen.svg); }
 
    //Specific for close icon
    &.icon-close {
@@ -34,7 +39,5 @@
        -ms-transform: rotate(45deg); /* IE 9 */
       -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
       transform: rotate(45deg);
-
    }
-
 }

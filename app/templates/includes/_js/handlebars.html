@@ -1,0 +1,122 @@
+<!--Template 'ITEM RESULTS'-->
+<script id="item-template" type="text/x-handlebars-template">
+    <a href="#" data-id="" class='result-item-wrapper' id="item{{id}}">
+        <div class="result-item {{extra-classes}}" data-date="{{date}}"  style="background-image:url({{image}});">
+            <div class="result-item__cover"><div class="result-item__cover__icon"><span class="icon icon--plus"></span></div></div>
+            <div class="result-item__header"><div class="result-item__header__title">{{title}}</div></div>
+            <div class="result-item__footer">
+                <div class="table-cell">
+                    <div class="table">
+                        <div class="table-cell result-item__footer__icon result-item__footer__icon--likes"><span class="icon icon--likes"></span></div>
+                        <div class="table-cell result-item__footer__value">{{likes}}</div>
+                        <div class="table-cell result-item__footer__icon result-item__footer__icon--comments"><span class="icon icon--comments"></span></div>
+                        <div class="table-cell result-item__footer__value">{{comments}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a><!--
+    --></script>
+
+<!--Template 'ITEM FULLVIEW'-->
+<script id="item-fullview-template" type="text/x-handlebars-template">
+    <div class="itemview-box">
+
+        <div class="itemview-column full">
+            <div class="itemview-header">
+                <a href="http://www.instagram.com/{{title}}/" target="_blank"><div class="itemview-avatar" style='background-image:url({{avatar_url}});'></div></a>
+                <a href="http://www.instagram.com/{{title}}/" target="_blank"><div class="itemview-username">@{{title}}</div></a>
+            </div>
+        </div>
+
+        <div class="itemview-column left">
+            <div class="itemview-image" style='background-image:url({{image_url}});'>
+                <div class="itemview-photo-tag {{user-tag-status}}">
+                    <div class="item-content">
+                        <div class="item-content-table">
+                            <div class="item-content item-content-icon icon icon-tag"></div>
+                            <div class="item-content itemview-photo-tag-name">{{user-tag-name}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a href="{{file_download_link}}" target="_blank"><div class="button download">SAVE PHOTO</div></a>
+        </div><!--
+        --><div class="itemview-column">
+            <div class="itemview-info">
+                <div class="item-content">
+                    <div class="item-content-table">
+                        <div class="item-content item-content-icon item-content-icon--padding-left-extra"><span class="icon icon-likes"></span></div>
+                        <div class="item-content item-content-value">{{likes}}</div>
+                        <div class="item-content item-content-icon"><span class="icon icon-comments"></span></div>
+                        <div class="item-content item-content-value">{{comments}}</div>
+                    </div>
+                </div>
+                <div class="item-content item-content-value item-content-icon--right-small">{{keyword-match}}</div>
+                <div class="item-content item-content-icon item-content-icon--right item-content-icon--large {{circle-status}}"><span class="icon icon-circle"></span></div>
+            </div>
+
+            <div class="itemview-comments">{{{caption_content}}}</div>
+        </div>
+
+        <div class="icon icon-close" id="button-close"></div>
+    </div>
+</script>
+
+ <!--Template 'KEYWORDS'-->
+<script id="keywords-template" type="text/x-handlebars-template">
+    <div class="keyword-edit-box">
+
+        <div class='keyword-edit-title'><strong>Keyword </strong>Search</div>
+
+        <div class='keyword-edit-body'>Want to focus your snooping even further? Enter some keywords for us to search for within the photo comments.<br/>Master keywords are your primary search words. If you have variants you’d also like to check, add them into the mix too!</div>
+
+        <div class="button add" id="button-add-keyword">ADD NEW LINE</div><!--
+        --><div class="button update padded" id="button-update-search">UPDATE SEARCH</div>
+        <div class="keyword-list-item-header">
+            <div class="keyword-list-column left">Master Keyword</div>
+            <div class="keyword-list-column right">Variants (different languages)</div>
+        </div>
+        <div class="keyword-list-items"></div>
+        <div class="icon icon-close" id="button-close"></div>
+    </div>
+</script>
+
+<!--Template 'KEYWORD ITEM'-->
+<script id="keyword-item-template" type="text/x-handlebars-template">
+    <div class="keyword-list-item hidden" id="keyword-item{{id}}">
+        <div class="keyword-list-column left"><input type='text' name='master{{id}}' id='master{{id}}' placeholder='For example: Red' value='{{master}}' class='input-text fluid-width small-text keyword-input-master'/></div>
+        <div class="keyword-list-column right"><input type='text' name='variant{{id}}' id='variant{{id}}' placeholder='For example: Rouge, Rot, Rojo' value='{{variants}}' class='input-text fluid-width small-text keyword-input-variants'/></div>
+    </div>
+</script>
+
+
+ <!--Template 'LIGHTBOX'-->
+<script id="lightbox-template" type="text/x-handlebars-template">
+    <div class="lightbox-container">
+        <div class="lightbox-fill"></div>
+        <div class="lightbox-content-wrapper">
+            <div class="lightbox-content">{{{content}}}</div>
+        </div>
+    </div>
+</script>
+
+<!--Template 'TITLE BAR'-->
+<script id="title-template" type="text/x-handlebars-template">
+    <div class="result-list-bar {{extras}}" id="title-bar{{id}}">
+        <div class="result-list-bar-column result-list-bar-title">{{title}}</div>
+    </div>
+</script>
+
+<!--Template 'SUBTITLE BAR'-->
+<script id="subtitle-template" type="text/x-handlebars-template">
+    <div class="result-list-bar no-background {{extras}}" id="title-bar{{id}}">
+        <div class="result-list-bar-column result-list-bar-title">{{title}}</div>
+    </div>
+</script>
+
+<!--Template 'ITEM LIST'-->
+<script id="itemlist-template" type="text/x-handlebars-template">
+    <div class="result-list-items" id='{{id}}'></div>
+</script>

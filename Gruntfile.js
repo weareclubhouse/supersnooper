@@ -19,7 +19,8 @@ module.exports = function (grunt) {
   // Configurable paths
   var config = {
     app: 'app',
-    dist: 'dist'
+    dist: 'dist',
+    templateFolder:'app/templates'
   };
 
   // Define the configuration for all the tasks
@@ -35,7 +36,7 @@ module.exports = function (grunt) {
         tasks: ['wiredep']
       },
       js: {
-        files: ['<%= config.app %>/scripts/{,*/}*.js'],
+        files: ['<%= config.app %>/scripts/**/*.js'],
         tasks: ['jshint'],
         options: {
           livereload: true
@@ -65,6 +66,10 @@ module.exports = function (grunt) {
           '.tmp/styles/{,*/}*.css',
           '<%= config.app %>/images/{,*/}*'
         ]
+      },
+      templates: {
+        files: ['<%= config.templateFolder %>/**/*.{html,htm}'],
+        tasks: ['includes']
       }
     },
 
@@ -133,7 +138,7 @@ module.exports = function (grunt) {
       },
       all: [
         'Gruntfile.js',
-        '<%= config.app %>/scripts/{,*/}*.js',
+        '<%= config.app %>/scripts/**/*.js',
         '!<%= config.app %>/scripts/vendor/*',
         'test/spec/{,*/}*.js'
       ]
@@ -371,6 +376,20 @@ module.exports = function (grunt) {
         'imagemin',
         'svgmin'
       ]
+    },
+
+    // Build the site using grunt-includes
+    includes: {
+      build: {
+        cwd: '<%= config.templateFolder %>/',
+        src: [ '*.html'], //, 'includes/**.*'
+        dest: 'app/',
+        options: {
+          flatten: true,
+          includePath: '<%= config.templateFolder %>/includes',
+          banner: ''
+        }
+      }
     }
   });
 
@@ -434,4 +453,7 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+
+  //Extra Tasks
+  grunt.loadNpmTasks('grunt-includes'); //used for building our template
 };
