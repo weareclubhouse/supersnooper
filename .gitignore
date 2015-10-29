@@ -3,5 +3,5 @@ dist
 .tmp
 .sass-cache
 bower_components
-app/api/_cache/
-app/api/_exports/
+app/api/_cache/*
+app/api/_exports/*
