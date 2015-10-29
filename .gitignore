@@ -3,5 +3,8 @@ dist
 .tmp
 .sass-cache
 bower_components
+
+#KEEP THESE FOLDERS, BUT NOT THEIR CONTENTS
 app/api/_cache/*
 app/api/_exports/*
+!.gitignore
