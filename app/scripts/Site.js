@@ -51,7 +51,7 @@ SuperSnooper.Site = function() {
     SuperSnooper.Signals.api.add(this.apiMonitor = function(_method, _vars) { this.apiEvent(_method, _vars); }.bind(this));
 
     //UI
-    this.viewer = new SuperSnooper.Modules.PostViewer();
+    this.viewer = new SuperSnooper.Modules.ItemViewer();
     this.itemManager = new SuperSnooper.Modules.ItemManager();
     this.bar = new SuperSnooper.Modules.InfoBar(this.itemManager);
     this.lightbox = new SuperSnooper.Modules.LightBox();

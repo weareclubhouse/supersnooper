@@ -19,8 +19,10 @@ $purple: #730064;
 $green: #69c386;
 $red: #ed2940;
 $redAlt: #a60024;
+$beige: #f1eee5; //download image button and image view header
 
 //RGB Versions
+$beigeRGB: 241, 238, 229; //download image button
 $blueRGB: 0, 137, 209;
 $blueAltRGB: 0, 155, 188;
 $pinkRGB: 159, 72, 158;
@@ -37,6 +39,29 @@ $radioSize:16px;
 ---------------------------------------------*/
 $resultItemSize: 332px;//2px margin inside the JS
 $resultItemMargin: 2px;
+
+/*----------------------------------------------
+- BUTTONS
+---------------------------------------------*/
+$buttonHeight: 53px;
+
+
+/*----------------------------------------------
+- VIEWER
+---------------------------------------------*/
+$viewerWidth: 840px;
+$viewerHeight: 480px;
+$viewerPadding: 10px;
+$viewerHeaderHeight: 78px;
+$viewerFooterHeight: $buttonHeight + (1 * $viewerPadding); //button
+$viewerImageWidth: 480px; //how much space the image takes up in the width
+$viewerImageHeight: 480px;
+$viewerImageAvatarSize: 58px;
+$viewerCommentsPaddingTop: 14px;
+$viewerCommentsPaddingSide: 20px;
+$viewerCommentsSplitSpacing: 16px;
+
+
 
 /*----------------------------------------------
 - BUTTONS

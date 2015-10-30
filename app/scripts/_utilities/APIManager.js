@@ -186,7 +186,7 @@ SuperSnooper.Utilities.APIManager.prototype.dataLoaded = function(_data) {
 
 
     //Decide if there is more to show...
-    if(_data.pagination && _data.pagination.next_max_id) {
+    if(_data.pagination && _data.pagination.next_max_id && (!SuperSnooper.helper.DEBUG_MODE || !SuperSnooper.helper.ONE_PAGE_ONLY)) {
         //Flag
         this.hasMoreData = true;
 

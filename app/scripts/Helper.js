@@ -28,6 +28,7 @@ SuperSnooper.Helper = function() {
 
     //Vars
     this.DEBUG_MODE = (window.location.hostname.indexOf('localhost') !== -1 || window.location.href.indexOf('v2') !== -1) ? true : false;
+    this.ONE_PAGE_ONLY = false;
 };
 
 //Constructor

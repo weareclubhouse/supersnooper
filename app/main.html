@@ -42,9 +42,10 @@
 
       </head>
   <body>
+
     <!--[if lt IE 10]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
+          <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
 
     <!--Header-->
     <header>
@@ -53,7 +54,7 @@
             <!--Credits and Logo-->
             <div class="header__top">
                 <div class="header__logo header__logo--snooper"></div>
-                <div class="header__logo header__logo--clubhouse">A project by <a href="http://weareclubhouse.com">Clubhouse Studios</a></div>
+                <div class="header__logo header__logo--clubhouse">By <a href="http://weareclubhouse.com">Clubhouse Studios</a></div>
             </div>
 
             <!--Search Bar-->
@@ -179,7 +180,7 @@
     <script src="scripts/_modules/FormManager.js"></script>
     <script src="scripts/_modules/InfoBar.js"></script>
     <script src="scripts/_modules/ItemManager.js"></script>
-    <script src="scripts/_modules/PostViewer.js"></script>
+    <script src="scripts/_modules/ItemViewer.js"></script>
     <script src="scripts/_modules/Lightbox.js"></script>
 
     <!-- endbuild -->
@@ -205,47 +206,70 @@
 
     <!--Template 'ITEM FULLVIEW'-->
     <script id="item-fullview-template" type="text/x-handlebars-template">
-        <div class="itemview-box">
+        <div class="itemview">
 
-            <div class="itemview-column full">
-                <div class="itemview-header">
-                    <a href="http://www.instagram.com/{{title}}/" target="_blank"><div class="itemview-avatar" style='background-image:url({{avatar_url}});'></div></a>
-                    <a href="http://www.instagram.com/{{title}}/" target="_blank"><div class="itemview-username">@{{title}}</div></a>
-                </div>
-            </div>
-
-            <div class="itemview-column left">
-                <div class="itemview-image" style='background-image:url({{image_url}});'>
-                    <div class="itemview-photo-tag {{user-tag-status}}">
-                        <div class="item-content">
-                            <div class="item-content-table">
-                                <div class="item-content item-content-icon icon icon-tag"></div>
-                                <div class="item-content itemview-photo-tag-name">{{user-tag-name}}</div>
-                            </div>
-                        </div>
+            <!--Columns-->
+            <div class="itemview__column itemview__column--image">
+                <div class="itemview__image" style='background-image:url({{image_url}});'>
+                    <!--Photo Tagging-->
+                    <div class="itemview__phototag {{user-tag-status}}">
+                        <div class="table-cell itemview__phototag__icon"><span class="icon icon--tag"></span></div>
+                        <div class="table-cell itemview__phototag__name">{{user-tag-name}}</div>
                     </div>
                 </div>
-
-                <a href="{{file_download_link}}" target="_blank"><div class="button download">SAVE PHOTO</div></a>
             </div><!--
-            --><div class="itemview-column">
-                <div class="itemview-info">
-                    <div class="item-content">
-                        <div class="item-content-table">
-                            <div class="item-content item-content-icon item-content-icon--padding-left-extra"><span class="icon icon-likes"></span></div>
-                            <div class="item-content item-content-value">{{likes}}</div>
-                            <div class="item-content item-content-icon"><span class="icon icon-comments"></span></div>
-                            <div class="item-content item-content-value">{{comments}}</div>
+            --><div class="itemview__column">
+
+                <div class="itemview__header">
+                    <!--Avatar-->
+                    <div class="itemview__header__column itemview__header__column--avatar">
+                        <a href="http://www.instagram.com/{{title}}/" target="_blank"><div class="itemview__avatar" style='background-image:url({{avatar_url}});'></div></a>
+                    </div>
+
+                    <div class="itemview__header__column itemview__header__column--info">
+                        <!--Name-->
+                        <a href="http://www.instagram.com/{{title}}/" target="_blank"><div class="itemview__username">@{{title}}</div></a>
+
+                        <!--Comment and Like counts-->
+                        <div class="table">
+                            <div class="itemview__icon itemview__icon--likes"><span class="icon icon--likes-alt"></span></div>
+                            <div class="itemview__count">{{counts.likes}}</div>
+                            <div class="itemview__icon itemview__icon--comments"><span class="icon icon--comments-alt"></span></div>
+                            <div class="itemview__count">{{counts.comments}}</div>
                         </div>
                     </div>
-                    <div class="item-content item-content-value item-content-icon--right-small">{{keyword-match}}</div>
-                    <div class="item-content item-content-icon item-content-icon--right item-content-icon--large {{circle-status}}"><span class="icon icon-circle"></span></div>
                 </div>
 
-                <div class="itemview-comments">{{{caption_content}}}</div>
+                <!--Comments / Caption-->
+                <div class="itemview__comments-wrapper">
+
+                    <div class="itemview__comments">
+                        {{#each comments}}
+
+                            {{#if split}}
+                            <div class="itemview__comments__split">-</div>
+                            {{/if}}
+
+                            {{#if date}}
+                            <div class="itemview__comments__date">{{date.date}}</div>
+                            <div class="itemview__comments__time">{{date.time}}</div>
+                            {{/if}}
+
+                            <div class="itemview__comments__username">{{#if linkUser}}<a href="http://www.instagram.com/{{user}}/" target="_blank">@{{user}}</a>{{else}}{{user}}{{/if}}</div>
+                            <div class="itemview__comments__comment">{{{comment}}}</div>
+
+                        {{/each}}
+                    </div>
+                </div>
+
+                <div class="itemview__footer">
+                    <!--Download Link-->
+                    <a href="{{file_download_link}}" target="_blank"><div class="button button--download">SAVE IMAGE</div></a>
+                </div>
             </div>
 
-            <div class="icon icon-close" id="button-close"></div>
+            <!--Close Button Floats-->
+            <div class="icon icon--close" id="button-close"></div>
         </div>
     </script>
 
@@ -290,14 +314,14 @@
     <!--Template 'TITLE BAR'-->
     <script id="title-template" type="text/x-handlebars-template">
         <div class="result-list-bar {{extras}}" id="title-bar{{id}}">
-            <div class="result-list-bar-column result-list-bar-title">{{title}}</div>
+            <div class="result-list-bar__column result-list-bar-title">{{title}}</div>
         </div>
     </script>
 
     <!--Template 'SUBTITLE BAR'-->
     <script id="subtitle-template" type="text/x-handlebars-template">
         <div class="result-list-bar no-background {{extras}}" id="title-bar{{id}}">
-            <div class="result-list-bar-column result-list-bar-title">{{title}}</div>
+            <div class="result-list-bar__column result-list-bar-title">{{title}}</div>
         </div>
     </script>
 

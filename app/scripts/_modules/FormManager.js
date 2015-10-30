@@ -36,8 +36,8 @@ SuperSnooper.Modules.FormManager = function() {
 
     //Dummy Search Trigger
     if(SuperSnooper.helper.DEBUG_MODE) {
-        this.keywords = [{master:'doom', variants:[]}]; //green,vert,verte||rouge,red||blue||yellow||black||white';
-        $('input#users').val('@gregfindon');
+        this.keywords = []; //{master:'doom', variants:[]}  //green,vert,verte||rouge,red||blue||yellow||black||white';
+        $('input#users').val('@dan_coppock');
         $('input#tags').val('');
         this.searchInit();
     }

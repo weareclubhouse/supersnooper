@@ -92,6 +92,5 @@
         //Close the CURL
         curl_close($_curl);
     }
-
 ?>
 

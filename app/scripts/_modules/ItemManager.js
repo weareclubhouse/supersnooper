@@ -86,6 +86,7 @@ SuperSnooper.Modules.ItemManager.prototype.reset = function() {
 //  ADD SOME ITEMS OLD BATCH METHOD
 //--------------------------------------------------------------------------
 SuperSnooper.Modules.ItemManager.prototype.addGroup = function(_items) {
+
     //Add to the list (also check for the oldset date)
     var _stamp;
     for(var i=0;i<_items.length;i++) {
@@ -103,6 +104,13 @@ SuperSnooper.Modules.ItemManager.prototype.addGroup = function(_items) {
         this.items.push(_items[i]);
     }
 
+    //TEMPORARY quick open of one of the items
+    /*if(this.opened === undefined) {
+        var _id = Math.floor(Math.random() * _items.length);
+        SuperSnooper.Signals.viewer.dispatch('open', {id:_id, data:this.items[_id]});
+        this.opened = true;
+    }*/
+
 
     //Is the interval running?
     if(this.itemAddTimer === undefined || this.itemAddTimer === null) {
@@ -117,7 +125,7 @@ SuperSnooper.Modules.ItemManager.prototype.addGroup = function(_items) {
 //--------------------------------------------------------------------------
 SuperSnooper.Modules.ItemManager.prototype.addNextItem = function() {
     //Add a batch of images
-    for(var i=0;i<this.batchProcessMax;i++) {
+    for(var i = 0; i < this.batchProcessMax; i++) {
         //Inc
         this.nextItem++;
 
@@ -151,7 +159,6 @@ SuperSnooper.Modules.ItemManager.prototype.setupResultItemLinks = function() {
         //Remove old listeners
         $(_links[i]).off('.items');
         $(_links[i]).on('click.items', function(_id) {
-            //this.showImageDetails(_id);
             //Dispatch an event
             SuperSnooper.Signals.viewer.dispatch('open', {id:_id, data:this.items[_id]});
             return false;
@@ -199,7 +206,7 @@ SuperSnooper.Modules.ItemManager.prototype.createIsotopeGroup = function(_id) {
         masonry: {
             //isFitWidth: true
             columnWidth: 334, //item size is 332
-            rowHeight: 332, //item size is 332
+            //rowHeight: 332, //item size is 332
 
             gutter: 0
         },

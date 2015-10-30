@@ -15,28 +15,20 @@
    //Images
    &--comments { background-image:url(../images/icon-comments.svg); } //used on results item and full info
    &--likes { background-image:url(../images/icon-likes.svg); } //used on results item and full info
+   &--comments-alt { background-image:url(../images/icon-comments-alt.svg); } //used on results item and full info
+   &--likes-alt { background-image:url(../images/icon-likes-alt.svg); } //used on results item and full info
    &--plus { background-image:url(../images/icon-plus.svg); } //rollover state on result items
+   &--hashtag { background-image:url(../images/icon-hashtag.svg); } //not used currently, but image is used elsewhere
+   &--pen { background-image:url(../images/icon-pen.svg); } //not used currently, but image is used elsewhere
+   &--tag { background-image:url(../images/icon-tag.svg);  } //user is tagged in photo
 
-   //Unused
-   &--tag { background-image:url(../images/icon-tag.svg);  }
-   &--circle { background-image:url(../images/icon-circle.svg); }
-   &--hashtag { background-image:url(../images/icon-hashtag.svg); }
-   &--pen { background-image:url(../images/icon-pen.svg); }
+   //Specific for close icon we rotate the plus icon
+   &--close {
+      //Plus icon
+      background-image:url(../images/icon-plus-alt.svg);
 
-   //Specific for close icon
-   &.icon-close {
-      background-image:url(../images/icon-add.svg);
-      cursor:pointer;
-      background-position:center;
-      position:absolute;
-      top:$paddingGeneral;
-      right:$paddingGeneral;
-      z-index:100;
-      display:block;
-      width:20px;
-      height:20px;
-
-       -ms-transform: rotate(45deg); /* IE 9 */
+      //Rotate it
+      -ms-transform: rotate(45deg); /* IE 9 */
       -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
       transform: rotate(45deg);
    }

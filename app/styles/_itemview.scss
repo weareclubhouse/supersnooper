@@ -1,44 +1,113 @@
 /*----------------------------------------------
+- ITEM CONTENT
+---------------------------------------------*/
+/*
+.item-content {
+    //Table
+    display:table-cell;
+    vertical-align: middle;
+
+
+    //Mini table for icons
+    &.item-content-table { display:table;}
+    &.item-title { white-space: nowrap; overflow:hidden; max-width:100px; }
+    &.item-content-value { padding-left:7px; font-size:13px; }
+    &.item-content-icon {
+        width:19px; height:19px;
+        padding-left:10px;
+        padding-top:2px;
+
+        &--large { //circle on image view page
+            width:23px;
+            height:23px;
+        }
+
+        &--padding-left-extra {
+            padding-left:17px;
+        }
+
+        &--right {
+          text-align:right;
+          padding-left:0px;
+          padding-right:16px;
+        }
+
+        &--right-small {
+          text-align:right;
+          padding-left:0px;
+          padding-right:10px;
+        }
+    }
+
+    //Hide specific bits
+   &.hidden {
+        display:none;
+   }
+}*/
+
+
+/*----------------------------------------------
 - ITEM VIEWER
 ---------------------------------------------*/
-.itemview-box {
+.itemview {
     display:block;
-    @include innerBox();
-    border-top:1px solid rgba(255, 255, 255, 0.24);
-    width:760px;
-    height:520px;
-    background-color:#6e767f;
-    padding:$paddingGeneral;
-    pointer-events:all;
     position:relative;
+    @include innerBox();
+    width:$viewerWidth;
+    height:$viewerHeight;
+
+    background-color:#ffffff;
+    padding:0;
+    pointer-events:all;
 
     //Center me
     margin:0 auto;
+
+    //Extra styling on normal close icon
+    .icon--close {
+        cursor:pointer;
+        background-position:center;
+        position:absolute;
+        top:10px;
+        right:10px;
+        z-index:100;
+        display:block;
+        width:20px;
+        height:20px;
+    }
 }
 
 //Columns
-.itemview-column {
-    width:350px;
+.itemview__column {
+    width:$viewerWidth - $viewerImageWidth;
+    height:$viewerHeight;
     display:inline-block;
-    //border:1px solid #cc0000;
     @include innerBox();
+
+    //Keep content at the top
     vertical-align:top;
 
-    &.left {
-        margin-right:$paddingGeneral;
-    }
+    //Image column
+    &--image { width:$viewerImageWidth; }
 
-     &.full {
-        width:720px;
-    }
 }
 
 /*----------------------------------------------
-- ITEM VIEWER - HEADER
+- ITEM VIEWER - HEADER (AVATAR, NAME, COMMENT & LIKE COUNTS)
 ---------------------------------------------*/
-.itemview-header {
+.itemview__header {
     display:table;
-    height:63px;
+    height:$viewerHeaderHeight;
+    width:100%;
+    color:#222;
+    background-color:$beige;
+    padding:$viewerPadding;
+    @include innerBox();
+
+
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
 
     //Links to profile
     a {
@@ -46,123 +115,192 @@
         vertical-align:middle;
         pointer-events:all;
     }
+
+    &__column {
+        display:table-cell;
+        vertical-align: middle;
+
+        &--avatar {
+            width:$viewerImageAvatarSize;
+        }
+
+        &--info {
+            padding-left:$viewerPadding;
+            @include innerBox();
+            overflow:hidden;
+        }
+    }
 }
 
 
+
 //Avatar
-.itemview-avatar {
-    width:53px;
-    height:53px;
+.itemview__avatar {
+    width:$viewerImageAvatarSize;
+    height:$viewerImageAvatarSize;
     background-size:cover;
-    display:inline-block;
-    margin-right:10px;
+    @include innerBox();
+
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
 }
 
 
 //Username
-.itemview-username {
+.itemview__username {
     display:inline-block;
-    font-size:25px;
-    font-weight:bold;
-    color:#fff;
-    vertical-align:middle;
     display:table-cell;
-    padding-bottom:5px; //align better
-    max-width:620px;
-    word-wrap:nowrap;
+    max-width:$viewerWidth -  ($viewerImageWidth + $viewerImageAvatarSize + (6 * $viewerPadding));
+    padding-bottom:6px;
+
+    //Text
+    font-size:20px;
     overflow:hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
+
+/*----------------------------------------------
+- ICONS (HEADER and USER TAGGED in PHOTO)
+---------------------------------------------*/
+.itemview__icon {
+    display:table-cell;
+    vertical-align: middle;
+    width:17px;
+    height:17px;
+    padding-top:3px;
+    @include innerBox();
+
+    &--likes {
+        width:20px;
+    }
+}
+
+
+/*----------------------------------------------
+- COUNTS (LIKES & COMMENTS)
+---------------------------------------------*/
+.itemview__count {
+    @include innerBox();
+    display:table-cell;
+    vertical-align: middle;
+
+    //Font
+    font-size:14px;
+    line-height:12px;
+    @include fontFace('medium');
+
+    //Padding bits
+    padding-left:6px;
+    &:not(:last-of-type) {
+        padding-right:18px;
+    }
+}
 
 /*----------------------------------------------
 - ITEM VIEWER - IMAGE AREA
 ---------------------------------------------*/
 
 //Main Image
-.itemview-image {
-    width:350px;
-    height:350px;
+.itemview__image {
+    width:$viewerImageWidth;
+    height:$viewerImageHeight;
     background-size:cover;
     display:block;
     pointer-events:all;
     margin-bottom:15px;
     position:relative;
 
-    //Photo tag area
-    .itemview-photo-tag {
-        position:absolute;
-        height:34px;
-        top:0;
-        left:0;
-        width:100%;
-        background-color:rgba(54, 54, 54, 0.74);
-        display:table;
+}
 
-        .item-content-icon {
-            //padding-right:8px;
-            padding-left:10px;
-            width:23px;
-            height:21px;
-        }
+//Photo tag
+.itemview__phototag {
+    position:absolute;
+    height:34px;
+    top:16px;
+    left:20px;
+    display:table;
 
-        .itemview-photo-tag-name {
-            padding-left:10px;
-            padding-bottom:2px;
-        }
-
-        &.hidden { display:none; }
+    &__icon {
+        //padding-right:8px;
+        //padding-left:10px;
+        width:23px;
+        height:21px;
     }
 
+    &__name {
+        padding-left:5px;
+        padding-bottom:3px;
+        font-size:14px;
+        color:#fff;
+        @include fontFace('medium');
 
+        //Text shadow - matches the filtering on results items
+        text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.6);
+    }
+
+    &--hidden { display:none; }
 }
 
 
 
 
 /*----------------------------------------------
-- ITEM VIEWER - INFO BAR
+- COMMENTS SECTION
 ---------------------------------------------*/
-.itemview-info {
-    width:350px;
-    height:44px;
-    margin-bottom:10px;
-    background-color:rgba(54, 54, 54, 0.6);
-    display:table;
+.itemview__comments-wrapper {
+    padding:$viewerCommentsPaddingTop 0;
+    width:$viewerWidth -  $viewerImageWidth;
+    height:$viewerHeight - ($viewerHeaderHeight + $viewerFooterHeight);
     @include innerBox();
 }
 
-.itemview-comments {
-    @include innerBox();
-    padding:14px 16px;
-    width:350px;
-    height:296px;
-    background-color:rgba(70, 70, 70, 0.9);
+
+.itemview__comments {
     display:block;
     @include innerBox();
+    width:100%;
+    height:$viewerHeight - ($viewerHeaderHeight + $viewerFooterHeight + (2 * $viewerCommentsPaddingTop));
+    position:relative;
+    padding:0 $viewerCommentsPaddingSide;
+
+    //Overflow...
     overflow:auto;
     pointer-events: all;
     word-wrap: break-word;
 
-
-    .itemview-caption {
-        margin-top:10px;
-        padding:12px;
-        background-color: rgba(54, 54, 54, 0.8);
-        font-size:14px;
-        color:#abb9b8;
-
-        //These have alternative weird names so they don't get replace with our text searches
+    //Specific text fields
+    &__date { @include fontFace('medium'); padding-bottom:8px; }
+    &__time { @include fontFace('medium'); position:absolute; right:$viewerCommentsPaddingSide; top:0; }
+    &__username { @include fontFace('medium'); }
+    &__comment {
+        //These have alternative weird names so they don't get replaced with our text searches
         .highlight-purple,._h004 { color:$purple; }
         .highlight-pink,._h003 { color:$pink; }
         .highlight-green,._h002 { color:$green; }
         .highlight-blue,._h001 { color:$blue; }
+    }
 
-
-        .itemview-caption-date {
-            color:#fff;
-            margin-bottom:11px;
-            margin-top:4px;
-        }
+    //Splitter
+    &__split {
+        margin-top:$viewerCommentsSplitSpacing;
+        margin-bottom:$viewerCommentsSplitSpacing;
     }
 }
 
+
+/*----------------------------------------------
+- ITEM FOOTER
+---------------------------------------------*/
+.itemview__footer {
+    display:block;
+    height:$viewerFooterHeight;
+    @include innerBox();
+    padding:0 $viewerPadding $viewerPadding $viewerPadding;
+
+    .button {
+        width:100%;
+    }
+}

@@ -1,10 +1,20 @@
 /*----------------------------------------------
-- ITEM
+- LIST
 ---------------------------------------------*/
+.result-list {
+    //@include hardwareAccelerate();
+}
+
+.result-list-items {
+    text-align:center;
+    margin:0 auto;
+}
 
 
-
-//Launch link
+/*----------------------------------------------
+- ITEMS
+---------------------------------------------*/
+//Wrapper for each item
 .result-item-wrapper {
     //Force size
     width:$resultItemSize;
@@ -13,7 +23,6 @@
 
     //Hover functionality
     &:hover {
-
         //Show the cover tint
         .result-item__cover {
             @include opacity(1);
@@ -163,72 +172,10 @@
         &--keyword-match {
             .result-item__header__title {
                 background-color:$blue;
-                text-shadow: 0 0 #000;
+                text-shadow: 0 0 #222;
             }
         }
     }
-}
-
-
-
-
-/*----------------------------------------------
-- ITEM CONTENT
----------------------------------------------*/
-.item-content {
-    //Table
-    display:table-cell;
-    vertical-align: middle;
-
-
-    //Mini table for icons
-    &.item-content-table { display:table;}
-    &.item-title { white-space: nowrap; overflow:hidden; max-width:100px; }
-    &.item-content-value { padding-left:7px; font-size:13px; }
-    &.item-content-icon {
-        width:19px; height:19px;
-        padding-left:10px;
-        padding-top:2px;
-
-        &--large { //circle on image view page
-            width:23px;
-            height:23px;
-        }
-
-        &--padding-left-extra {
-            padding-left:17px;
-        }
-
-        &--right {
-          text-align:right;
-          padding-left:0px;
-          padding-right:16px;
-        }
-
-        &--right-small {
-          text-align:right;
-          padding-left:0px;
-          padding-right:10px;
-        }
-    }
-
-
-   &.hidden {
-        display:none;
-   }
-}
-
-
-/*----------------------------------------------
-- LIST
----------------------------------------------*/
-.result-list {
-    @include hardwareAccelerate();
-}
-
-.result-list-items {
-    text-align:center;
-    margin:0 auto;
 }
 
 
@@ -257,7 +204,7 @@
 }
 
 //Column within an item
-.result-list-bar-column {
+.result-list-bar__column {
     display:table-cell;
     vertical-align:middle;
 }

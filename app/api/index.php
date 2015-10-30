@@ -173,6 +173,10 @@
         $_dataResponse['data-pre-filter'][$i]['matchList'] = array();
         $_dataResponse['data-pre-filter'][$i]['matches'] = array();
 
+        //Hack the images
+        $_dataResponse['data-pre-filter'][$i]['images']['standard_resolution']['url'] = str_replace('s150x150', 's640x640', $_dataResponse['data-pre-filter'][$i]['images']['thumbnail']['url']);
+        $_dataResponse['data-pre-filter'][$i]['images']['low_resolution']['url'] = str_replace('s150x150', 's332x332', $_dataResponse['data-pre-filter'][$i]['images']['thumbnail']['url']);
+
 
         ///--------------------------------------------------------
         //  FLAG UP MATCHES AND WHERE THEY ARE IF THIS IS A HASH TAG SEARCH

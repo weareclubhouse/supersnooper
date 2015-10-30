@@ -1,0 +1,82 @@
+/*----------------------------------------------
+- REGISTER
+---------------------------------------------*/
+
+.register-wrapper {
+    display:table;
+    width:100%;
+    height:100%;
+}
+
+.register-holder {
+    display:table-cell;
+    margin:0 auto;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.register-content {
+    font-size:14px;
+    padding-bottom:80px;
+
+    &__logo-big {
+        display:block;
+        margin:0 auto;
+        background-image:url(../images/icon-logo-eye.svg);
+        background-size:100% auto;
+        background-repeat:no-repeat;
+        background-position:center;
+        width:16vw;
+        height:16.5vw;
+        max-width:107px;
+        max-height:107px;
+    }
+
+    &__logo {
+        display:block;
+        margin:5vw auto 2.1vw auto;
+        @media (min-width: 1440px) { margin:74px auto 30px auto; }
+
+        background-image:url(../images/icon-logo.svg);
+        background-size:100% auto;
+        background-repeat:no-repeat;
+        background-position:center;
+        width:80vw;
+        height:5.2vw;
+        max-width:555px;
+        max-height:36px;
+    }
+
+    &__button {
+        margin-top:6.5vw;
+        margin-bottom:25px;
+        @media (min-width: 1440px) {
+            margin-top:94px;
+        }
+    }
+
+    &__text-strapline {
+        text-transform: uppercase;
+        padding:0 7%;
+    }
+
+    &__text-privacy {
+        font-size:12px;
+        padding:0 7%;
+    }
+}
+
+//Footer
+.register-footer {
+    position:fixed;
+    bottom:50px;
+    width:100%;
+    margin:0 auto;
+    text-align: center;
+    text-transform: uppercase;
+    font-size:10px;
+
+    a, a:visited, a:active, a:link, a:hover {
+        @include fontFace('medium');
+    }
+}
