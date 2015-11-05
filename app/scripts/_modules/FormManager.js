@@ -48,15 +48,33 @@ SuperSnooper.Modules.FormManager = function() {
     //Dummy Search Trigger
     if(SuperSnooper.helper.DEBUG_MODE) {
         $('#search-names').text('gregfindon');
-        $('#search-tags').text('rugbyballtest');
-        $('#search-keywords').text('hop');
+        $('#search-tags').text('');
+        $('#search-keywords').text('');
         //this.inputOptionSelect('options-names', 1, 'mentions');
         this.searchInit();
     }
+
+    //Animation frame to keep the 'options-tags' anchored in the right place
+    this.monitorTagOptions = false;
 };
 
 //Definition
 SuperSnooper.Modules.FormManager.constructor = SuperSnooper.Modules.FormManager;
+
+
+
+//--------------------------------------------------------------------------
+//  CHEK THE POSITION OF THE TAG OPTIONS
+//--------------------------------------------------------------------------
+SuperSnooper.Modules.FormManager.prototype.checkTagOptionsPosition = function() {
+    if(this.monitorTagOptions) {
+        //Position it
+        $('#options-tags').css({'left': $('#search-tags').position().left - 33});
+
+        //Again
+        requestAnimationFrame(function() { this.checkTagOptionsPosition(); }.bind(this));
+    }
+};
 
 //--------------------------------------------------------------------------
 //  INPUT OPTIONS
@@ -108,8 +126,6 @@ SuperSnooper.Modules.FormManager.prototype.inputOptionSelect = function(_parentI
         }
     }
 
-    console.log(_parentID + ':' + _itemValue);
-
     //Set the value
     this.optionGroups[_parentID].value = _itemValue;
     this.optionGroups[_parentID].valueID = _itemID;
@@ -144,15 +160,15 @@ SuperSnooper.Modules.FormManager.prototype.inputInit = function() {
         //On Blur / Focus events
         _item.on('blur', function(_itemBlur) { this.inputItemFocus(_itemBlur, false); }.bind(this, _item));
         _item.on('focus', function(_itemFocus) { this.inputItemFocus(_itemFocus, true); }.bind(this, _item));
+        //_item.on('click', function(_itemFocus) { this.inputItemFocus(_itemFocus, true); }.bind(this, _item));
     }
 
     //Document event to kill the options if the user is clicking outside - not really required now
-    /*
     $(window).on('click', function(_event) {
         if(!$(_event.target).hasClass('search-form__option') && !$(_event.target).hasClass('search-form__column__input')) {
-            this.manageOptions();
+            this.manageOptions(''); //close options
         }
-    }.bind(this));*/
+    }.bind(this));
 };
 
 
@@ -207,7 +223,7 @@ SuperSnooper.Modules.FormManager.prototype.inputTextCheck = function(_item) {
     }
 
     //If this is the 'tags' then check if we should now show the options
-    this.manageOptions();
+    this.manageOptions(_item.attr('id').substr(7));
 
 };
 
@@ -245,7 +261,7 @@ SuperSnooper.Modules.FormManager.prototype.inputItemFocus = function(_item, _foc
     }
 
     //Manage options display - not required on focus
-    //this.manageOptions();
+    this.manageOptions(_item.attr('id').substr(7));
 };
 
 
@@ -266,24 +282,77 @@ SuperSnooper.Modules.FormManager.prototype.isMultiTaggging = function(_str) {
 
 
 //--------------------------------------------------------------------------
+//  CHECK IF A GIVEN OPTION SO
+//--------------------------------------------------------------------------
+SuperSnooper.Modules.FormManager.prototype.manageOptions = function(_id) {
+    //NAMES options
+    var _namesValue = $('#search-names').text().trim().toLowerCase();
+    var _names = (_id === 'names' && _namesValue !== '' && _namesValue !== $('#search-names').attr('data-default').toLowerCase()) ? true : false;
+
+    //TAGS options
+    var _tagsValue = $('#search-tags').text().trim().toLowerCase();
+    var _tags = (_id === 'tags' && this.isMultiTaggging(_tagsValue)) ? true : false;
+
+    //Show / Hide
+    this.optionShow('names', _names);
+    this.optionShow('tags', _tags);
+
+    //Spacer
+    if(!_names && !_tags) {
+        //Collapase the spacer
+        $('.search-form__options-wrapper').removeClass('search-form__options-wrapper--open');
+
+        //Stop monitoring the tag-options position
+        this.monitorTagOptions = false;
+    } else {
+        //Expand the spacer
+        $('.search-form__options-wrapper').addClass('search-form__options-wrapper--open');
+
+        //Make sure we are monitoring the position of the tag-options
+        if(this.monitorTagOptions === false) {
+            requestAnimationFrame(function() { this.checkTagOptionsPosition(); }.bind(this));
+            this.monitorTagOptions = true;
+        }
+    }
+};
+
+//--------------------------------------------------------------------------
 //  INIT A SEARCH
 //--------------------------------------------------------------------------
-SuperSnooper.Modules.FormManager.prototype.manageOptions = function() {
-    //Names box
-    if($('#search-names').text().trim() !== '' && $('#search-names').text().trim().toLowerCase() !== $('#search-names').attr('data-default').toLowerCase()) {
-        $('#options-names').removeClass('search-form__optionset--hidden');
+SuperSnooper.Modules.FormManager.prototype.optionShow = function(_id, _show) {
+    if(_show) {
+        //Show the options
+        $('#options-' + _id).removeClass('search-form__optionset--hidden');
+
+        //Change the min-width on the input area to match the options width
+        $('#search-' + _id).css({'min-width':($('#options-' + _id).width() - 50) +'px'});
     } else {
-        $('#options-names').addClass('search-form__optionset--hidden');
+        //Hide the options
+        $('#options-' + _id).addClass('search-form__optionset--hidden');
+
+        //Reset the min-width on the input area
+        $('#search-' + _id).css({'min-width':'10px'});
     }
-
-    //Tags
-    if(this.isMultiTaggging($('#search-tags').text().trim())) {
-        $('#options-tags').removeClass('search-form__optionset--hidden');
-    } else {
-        $('#options-tags').addClass('search-form__optionset--hidden');
-    }
+};
 
 
+//--------------------------------------------------------------------------
+//  INIT A MONITOR ON A GIVEN OPTION FIELD
+//--------------------------------------------------------------------------
+SuperSnooper.Modules.FormManager.prototype.initOptionMonitor = function() {
+
+};
+
+
+//--------------------------------------------------------------------------
+//  INIT A SEARCH
+//--------------------------------------------------------------------------
+SuperSnooper.Modules.FormManager.prototype.hideAllOptions = function() {
+    //Hide all
+    $('#options-tags').addClass('search-form__optionset--hidden');
+    $('#options-names').addClass('search-form__optionset--hidden');
+
+    //Collapse the spacer
 };
 
 

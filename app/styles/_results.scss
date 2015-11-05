@@ -3,6 +3,7 @@
 ---------------------------------------------*/
 .result-list {
     text-align: left;
+    @include hardwareAccelerate();
 }
 
 .result-list-items {
@@ -25,15 +26,6 @@
 
     //@include hardwareAccelerate();
 
-    //@media (min-width: 2102px) { width:20%; }
-    //@media (max-width: 766px) { @include widthInColumns(1, $resultItemSize, $resultItemMargin); }
-    //@media (max-width: 1100px) { @include widthInColumns(2, $resultItemSize, $resultItemMargin); }
-    @media (min-width: 480px) { width:calc(100% / 2); } //4 columns
-    @media (min-width: 770px) { width:calc(100% / 3); } //4 columns
-    @media (min-width: 1110px) { width:calc(100% / 4); } //4 columns
-    @media (min-width: 1440px) { width:calc(100% / 5); } //5 columns
-    @media (min-width: 1768px) { width:calc(100% / 6); } //6 columns
-    @media (min-width: 2100px) { width:calc(100% / 7); } //6 columns
 
     //This is a bit of a hack to pad the items height by 100% of the width, giving it the illusion of being the same height as it is wide
     &:before {
@@ -70,14 +62,17 @@
         overflow:hidden;
         text-align:left;
         color:#fff;
-        margin:0 3px;
+
+        //Margins are dealt with at the bottom of this page
+        margin:0;
+        padding:0;
 
         //Font (titles and values)
         font-size:14px;
         @include fontFace('medium');
 
         //Accelerate
-        @include hardwareAccelerate();
+        //@include hardwareAccelerate();
 
 
         /*----------------------------------------------
@@ -206,4 +201,81 @@
             }
         }
     }
+
+    //Sizing
+
+    //Change columns
+    //@media (min-width: 480px) { width:calc(100% / 2); } //2 columns
+    //@media (min-width: 770px) { width:calc(100% / 3); } //3 columns
+    //@media (min-width: 1110px) { width:calc(100% / 4); } //4 columns
+    //@media (min-width: 1440px) { width:calc(100% / 5); } //5 columns
+    //@media (min-width: 1768px) { width:calc(100% / 6); } //6 columns
+    //@media (min-width: 2100px) { width:calc(100% / 7); } //6 columns
+
+
+    //2 COLUMNS
+    @media (min-width: 480px) {
+        width:calc(100% / 2);
+
+        //Margins on for all elemens above this size
+        .result-item {
+            margin-left:$resultItemMargin;
+            margin-right:$resultItemMargin;
+        }
+
+        @media (max-width: 769px) {
+            &:nth-of-type(2n + 1) { .result-item { margin-left:0 !important; } }
+            &:nth-of-type(2n) { .result-item { margin-right:0 !important; } }
+        }
+    }
+
+    //3 COLUMNS
+    @media (min-width: 770px) {
+        width:calc(100% / 3);
+
+        @media (max-width: 1109px) {
+            &:nth-of-type(3n + 1) { .result-item { margin-left:0 !important; } }
+            &:nth-of-type(3n) { .result-item { margin-right:0 !important; } }
+        }
+    }
+
+    //4 COLUMNS
+    @media (min-width: 1110px) {
+        width:calc(100% / 4);
+
+        @media (max-width: 1439px) {
+            &:nth-of-type(4n + 1) { .result-item { margin-left:0 !important; } }
+            &:nth-of-type(4n) { .result-item { margin-right:0 !important; } }
+        }
+    }
+
+    //5 COLUMNS
+    @media (min-width: 1440px) {
+        width:calc(100% / 5);
+        @media (max-width: 1767px) {
+            &:nth-of-type(5n + 1) { .result-item { margin-left:0 !important; } }
+            &:nth-of-type(5n) { .result-item { margin-right:0 !important; } }
+        }
+    }
+
+    //6 COLUMNS
+    @media (min-width: 1768px) {
+        width:calc(100% / 6);
+
+        @media (max-width: 2099px) {
+            &:nth-of-type(6n + 1) { .result-item { margin-left:0 !important; } }
+            &:nth-of-type(6n) { .result-item { margin-right:0 !important; } }
+        }
+    }
+
+    //7 COLUMNS
+    @media (min-width: 2100px) {
+        width:calc(100% / 7);
+
+        &:nth-of-type(7n + 1) { .result-item { margin-left:0 !important; } }
+        &:nth-of-type(7n) { .result-item { margin-right:0 !important; } }
+    }
+
+    //OTHERS?
+
 }
