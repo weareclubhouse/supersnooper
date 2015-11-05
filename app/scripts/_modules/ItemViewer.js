@@ -53,14 +53,14 @@ SuperSnooper.Modules.ItemViewer.prototype.viewerEvent = function(_method, _vars)
 //--------------------------------------------------------------------------
 SuperSnooper.Modules.ItemViewer.prototype.showImageDetails = function(_id, _info) {
     //Info about what was a match
-    var i;
+    var i, j;
     var _comments = [];
 
     //Info
     this.info = _info;
 
     //Caption is displayed regardless....
-    if(_info.caption && _info.caption.text) { // && (!_info.filtered || _info.filterMatches.indexOf('caption') !== -1)
+    if(_info.caption && _info.caption.text) {
         //User caption
         _comments.push({date:this.getDisplayDate(_info.created_time), user:_info.user.username, comment:this.filterText(_info.caption.text), split:false, linkUser:true});
     } else {
@@ -70,16 +70,20 @@ SuperSnooper.Modules.ItemViewer.prototype.showImageDetails = function(_id, _info
 
     //Comments
     if(_info.comments) {
+        //Spit out any comments that either contain tag/user matches or keywords
         for(i=0;i<_info.comments.data.length;i++) {
-            if(_info.filterMatches.indexOf('comment' + i) !== -1 || _info.keywordMatches.fields.indexOf('comment' + i) !== -1) {
+            //Loop through the matches array for matching tags/mentions from the API call
+            var _mentioned = false;
+            for(j = 0; j < _info.matches.length; j++) {
+                console.log(_info.matches[j]);
+                if(_info.matches[j].indexOf('comment' + i + '|') === 0) {
+                    _mentioned = true;
+                    break;
+                }
+            }
 
-                //No longer bothered with comment date... this.getDisplayDate(_info.comments.data[i].created_time);
-                /*_caption += '<div class="itemview__caption">'; //date removed <div class="itemview__caption__date">' + _dateString + _timeString + '</div>
-                _caption += '<a href="http://www.instagram.com/' + _info.comments.data[i].from.username + '/" target="_blank">@' + _info.comments.data[i].from.username;
-                _caption += (_info.comments.data[i].from.username === _info.user.username) ? ' (Picture Owner)' : ' (Not Picture Owner)';
-                _caption += '</a><br/>';
-                _caption += this.filterText(_info.comments.data[i].text) + '</div>';*/
-
+            //Mentioned, or keywords
+            if(_mentioned || _info.keywordMatches.fields.indexOf('comment' + i) !== -1) {
                 //Add to comments list
                 _comments.push({date:'', time:'', user:_info.comments.data[i].from.username, comment:this.filterText(_info.comments.data[i].text), split:true, linkUser:true});
             }
@@ -91,8 +95,8 @@ SuperSnooper.Modules.ItemViewer.prototype.showImageDetails = function(_id, _info
 
     //Is user in photo?
     var _userInPhoto = false;
-    for(i=0;i<_info.filterMatches.length;i++) {
-        if(_info.filterMatches[i].indexOf('user_in_photo') !== -1) {
+    for(i=0;i<_info.matches.length;i++) {
+        if(_info.matches[i].indexOf('tagged|') === 0) {
             _userInPhoto = true;
             break;
         }

@@ -73,12 +73,7 @@
                         <!--Input-->
                         <span class="search-form__column__input" contentEditable="true" id="search-names" data-default="ADD A USERNAME"></span>
 
-                        <!--Options-->
-                        <span class="search-form__optionset search-form__optionset--hidden" id="options-names">
-                          <span class="search-form__option search-form__option--selected" data-id='owned'>Owned photos</span>
-                          <span class="search-form__option-spacer">or</span>
-                          <span class="search-form__option" data-id='mentions'>@mentions</span>
-                        </span>
+
                     </div><!--
                     --><div class="search-form__column">
                     <!--Icon-->
@@ -87,12 +82,7 @@
                         <!--Input-->
                         <span class="search-form__column__input" contentEditable="true" id="search-tags" data-default="ADD UP TO 3 TAGS"></span>
 
-                        <!--Options-->
-                        <span class="search-form__optionset search-form__optionset--hidden" id="options-tags">
-                          <span class="search-form__option search-form__option--selected" data-id='all'>Every tag</span>
-                          <span class="search-form__option-spacer">or</span>
-                          <span class="search-form__option" data-id='any'>any tag</span>
-                        </span>
+
                     </div><!--
                     --><div class="search-form__column">
                         <!--Icon-->
@@ -100,6 +90,23 @@
 
                         <!--Input-->
                         <span class="search-form__column__input" contentEditable="true" id="search-keywords" data-default="ADD KEYWORDS"></span>
+                    </div>
+
+                    <!--Options-->
+                    <div class="search-form__options-wrapper">
+                        <!--Options Names-->
+                        <div class="search-form__optionset search-form__optionset--hidden" id="options-names">
+                          <span class="search-form__option search-form__option--selected" data-id='owned'>Owned photos</span>
+                          <span class="search-form__option-spacer">or</span>
+                          <span class="search-form__option" data-id='mentions'>@mentions</span>
+                        </div>
+
+                        <!--Options Tags-->
+                        <div class="search-form__optionset search-form__optionset--hidden" id="options-tags">
+                          <span class="search-form__option search-form__option--selected" data-id='all'>Every tag</span>
+                          <span class="search-form__option-spacer">or</span>
+                          <span class="search-form__option" data-id='any'>any tag</span>
+                        </div>
                     </div>
 
                     <!--Submit button-->

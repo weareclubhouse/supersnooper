@@ -71,9 +71,6 @@ SuperSnooper.Utilities.APIManager.prototype.initSearch = function(_terms) {
         this.postLast.abort();
     }
 
-    //Setup the filters - this is nonsense and not needed
-    //this.searchTerms.filterArray = this.searchTerms.filters.split(',');
-
     //Empty the items array
     this.items = [];
 
@@ -117,53 +114,10 @@ SuperSnooper.Utilities.APIManager.prototype.dataLoaded = function(_data) {
     //Flag off
     this.postInProgress = false;
 
-    //Loop through our data and decide if the item matches our criteria (THIS IS ALREADY DONE IN THE PHP, SO WE NEED TO REMOVE THIS!!!)
-    var _itemsToDisplay = [];
-    var _passed = true;
-    var _search;
-    var _itemInfo;
-
-    //Loop through the items (WHY WHY WHY are we filtering them again?)
+    //Loop through the items
     for(var i=0; i < _data.data.length; i++) {
-        //Add in our extra fields
-        _data.data[i].filterMatches = []; //this could be made better to accomodate multiples?
-
-        //Get the info
-        _itemInfo = _data.data[i];
-        _passed = true;
-
-        //Filtering
-        if(this.searchTerms.filterType === 'user' && _passed) {
-            //Search
-            _search = this.filterForUserNames(_itemInfo, this.searchTerms.filterArray);
-
-            //Set the flags
-            _passed = _search.result; //this.filterForUserNames(this.searchTerms.filter);
-
-            //If passed, then add the filter matches to the object
-            if(_passed) {
-                 _data.data[i].filterMatches = _search.matches;
-            }
-        } else if(this.searchTerms.filterType === 'tag' && _passed) {
-            //Search
-            _search = this.filterForTags(_itemInfo, this.searchTerms.filterArray);
-
-            //Set the flags
-            _passed = _search.result; //this.filterForUserNames(this.searchTerms.filter);
-
-            //If passed, then add the filter matches to the object
-            if(_passed) {
-                 _data.data[i].filterMatches = _search.matches;
-            }
-        }
-
         //Keyword matching for this item
-        _data.data[i].keywordMatches = this.keywordMatch(_itemInfo, this.searchTerms.keywords);
-
-        //Add the item to the list
-        if(_passed) {
-            _itemsToDisplay.push(_itemInfo);
-        }
+        _data.data[i].keywordMatches = this.keywordMatch(_data.data[i], this.searchTerms.keywords);
     }
 
     //Push ALL of the data into the main stack (needed for looping back through later on maybe)
@@ -177,7 +131,7 @@ SuperSnooper.Utilities.APIManager.prototype.dataLoaded = function(_data) {
         //Flag
         this.hasMoreData = true;
 
-        //Add the next item paramater in and search again...
+        //Add the next item paramater in for searching again...
         this.searchTerms.itemStartID = _data.pagination.next_max_id;
     } else {
         //No more data
@@ -195,7 +149,7 @@ SuperSnooper.Utilities.APIManager.prototype.dataLoaded = function(_data) {
     //Finally dispatch an event containing the items we have deemed fit to be included!
     SuperSnooper.Signals.api.dispatch('items-add', {
         //Data
-        items:_itemsToDisplay, //items to show
+        items:_data.data, //items to show
 
         //Counts
         itemCountProcessed:parseInt(_data.processedCount), //how many items were found (ignoring any filters that were applied)
@@ -253,7 +207,7 @@ SuperSnooper.Utilities.APIManager.prototype.setState = function(_state) {
 
 
 //--------------------------------------------------------------------------
-//  FILTER FOR A SET OF USERNAMES (MATCH ANY)
+//  KEYWORD MATCHING
 //--------------------------------------------------------------------------
 SuperSnooper.Utilities.APIManager.prototype.keywordMatch = function(_info, _words) {
     //Matches
@@ -302,132 +256,4 @@ SuperSnooper.Utilities.APIManager.prototype.keywordMatch = function(_info, _word
 
     //Return
     return _matches;
-};
-
-
-
-
-//--------------------------------------------------------------------------
-//  FILTER FOR A SET OF USERNAMES (MATCH ANY)
-//--------------------------------------------------------------------------
-SuperSnooper.Utilities.APIManager.prototype.filterForUserNames = function(_info, _filters) {
-
-
-    //--------------------------------------------------------------------------
-    // USER FILTERING
-    //--------------------------------------------------------------------------
-    // 1. Caption
-    // 2. Comments
-    // 3. Users tagged in photo
-
-    //Vars
-    var _searchFields = []; //fields we are going to search
-    var _searchValue; //what are we going to be searching for
-    var _response = {result:false, matches:[]}; //response object
-    var i,j;
-
-    //CAPTION
-    if(_info.caption && _info.caption.text) {
-        _searchFields.push({id:'caption', text:_info.caption.text.toLowerCase()});
-    }
-
-    //COMMENTS
-    if(_info.comments.data.length > 0) {
-        for(i=0;i<_info.comments.data.length;i++) {
-            _searchFields.push({id:'comment' + i, text:_info.comments.data[i].text.toLowerCase()});
-        }
-    }
-
-    //USERS IN PHOTO
-    if(_info.users_in_photo.length > 0) {
-        for(i=0;i<_info.users_in_photo.length;i++) {
-            _searchFields.push({id:'user_in_photo' + i, text:'@' + _info.users_in_photo[i].user.username.toLowerCase()});
-        }
-    }
-
-    //Loop through all filters
-    for(i=0;i<_filters.length;i++) {
-        //What are we looking for?
-        _searchValue = '@' + _filters[i].toLowerCase();
-
-        //Go through all of the search fields...
-        for(j=0;j<_searchFields.length;j++) {
-            //Does search value existin our field?
-            if(_searchFields[j].text.indexOf(_searchValue) !== -1) {
-                //We have a match!
-                _response.result = true;
-
-                //Store the match (strip off the @ or the #)
-                /*if(_response.matches[_filters[i].toLowerCase()] === undefined) {
-                    _response.matches[_filters[i].toLowerCase()] = [];
-                }*/
-                _response.matches.push(_searchFields[j].id); //this could result in more than one match if we have multiple filters, need to think about this
-            }
-
-        }
-    }
-
-    //Return response
-    return _response;
-};
-
-
-
-//--------------------------------------------------------------------------
-//  FILTER FOR A SET OF TAGS (MATCH ANY)
-//--------------------------------------------------------------------------
-SuperSnooper.Utilities.APIManager.prototype.filterForTags = function(_info, _filters) {
-
-
-    //--------------------------------------------------------------------------
-    // USER FILTERING
-    //--------------------------------------------------------------------------
-    // 1. Caption
-    // 2. Comments
-    // 3. Users tagged in photo
-
-    //Vars
-    var _searchFields = []; //fields we are going to search
-    var _searchValue; //what are we going to be searching for
-    var _response = {result:false, matches:[]}; //response object
-    var i,j;
-
-    //CAPTION
-    if(_info.caption && _info.caption.text) {
-        _searchFields.push({id:'caption', text:_info.caption.text.toLowerCase()});
-    }
-
-    //COMMENTS
-    if(_info.comments.data.length > 0) {
-        for(i=0;i<_info.comments.data.length;i++) {
-            _searchFields.push({id:'comment' + i, text:_info.comments.data[i].text.toLowerCase()});
-        }
-    }
-
-    //PHOTO TAGS!
-
-    //Loop through all filters
-    for(i=0;i<_filters.length;i++) {
-        //What are we looking for?
-        _searchValue = '#' + _filters[i].toLowerCase();
-
-        //Go through all of the search fields...
-        for(j=0;j<_searchFields.length;j++) {
-            //Does search value existin our field?
-            if(_searchFields[j].text.indexOf(_searchValue) !== -1) {
-                //We have a match!
-                _response.result = true;
-
-                //Store the match (strip off the @ or the #)
-                /*if(_response.matches[_filters[i].toLowerCase()] === undefined) {
-                    _response.matches[_filters[i].toLowerCase()] = [];
-                }*/
-                _response.matches.push(_searchFields[j].id); //this could result in more than one match if we have multiple filters, need to think about this
-            }
-
-        }
-    }
-
-    //Return response
-    return _response;
 };

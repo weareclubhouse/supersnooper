@@ -213,7 +213,7 @@
         $_match = true;
         $_itemInfo = &$_dataResponse['data-pre-filter'][$_id]; //pointer to the data object - this ensures it gets updated
 
-        //Track how many of our items were matched (this allows us to filter out items that don't match on an ALL hashtag search)
+        //Track how many of our items were matched (stops dupes)
         $_filtersMatched = array();
 
         //Make a matches array
@@ -221,8 +221,13 @@
             //What are we searching for?
             $_searchValue = $_prefix . strtolower(trim($_filters[$i]));
 
-            //Captions
-            if(strpos(strtolower($_itemInfo['caption']['text']), $_searchValue) !== false) {
+
+            //Check
+            $_textToCheck = strtolower($_itemInfo['caption']['text']);
+            $_index = strpos($_textToCheck, $_searchValue);
+
+            //Captions - these get shown regardless, so could remove this test?
+            if($_index !== false && validateMention($_searchValue, $_index, $_textToCheck)) {
                 array_push($_itemInfo['matches'], 'caption|' . $_searchValue);
                 (!in_array('caption', $_itemInfo['matchList'])) ? array_push($_itemInfo['matchList'], 'caption') : null;
                 (!in_array($i, $_filtersMatched)) ? array_push($_filtersMatched, $i) : null;
@@ -231,7 +236,11 @@
             //Comments
             if($_itemInfo['comments']['count'] > 0) {
                 for($j=0;$j<count($_itemInfo['comments']['data']);$j++) {
-                    if(strpos(strtolower($_itemInfo['comments']['data'][$j]['text']), $_searchValue) !== false) {
+                    //Check
+                    $_textToCheck = strtolower($_itemInfo['comments']['data'][$j]['text']);
+                    $_index = strpos($_textToCheck, $_searchValue);
+
+                    if($_index !== false && validateMention($_searchValue, $_index, $_textToCheck)) {
                         array_push($_itemInfo['matches'], 'comment' . $j . '|' . $_searchValue);
                         (!in_array('comment' . $j, $_itemInfo['matchList'])) ? array_push($_itemInfo['matchList'], 'comment' . $j) : null;
                         (!in_array($i, $_filtersMatched)) ? array_push($_filtersMatched, $i) : null;
@@ -239,7 +248,7 @@
                 }
             }
 
-            //In picture!
+            //In picture
             if($_prefix === '@') {
                 for($j=0;$j<count($_itemInfo['users_in_photo']);$j++) {
                     if('@' . trim(strtolower($_itemInfo['users_in_photo'][$j]['user']['username'])) === $_searchValue) {
@@ -265,6 +274,21 @@
 
         //Return true or false for a match
         return $_match;
+    }
+
+    ///--------------------------------------------------------
+    //  VALIDATE A MENTION
+    //---------------------------------------------------------
+    function validateMention($_word, $_index, $_text) {
+        //Character after the text
+        $_postCharacter = ($_index + strlen($_word) >= strlen($_text)) ? '' : substr($_text, $_index + strlen($_word), 1);
+
+        //If post character is blank, not an underscore and not alphanumeric character, then the match is good
+        if($_postCharacter === '' || (ctype_alnum($_postCharacter) === false && $_postCharacter !== '_')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
