@@ -2,7 +2,7 @@
 <html class="no-js">
     <head>
         <meta charset="utf-8">
-        <title>Super Snooper&reg;</title>
+        <title>Super Snooper&reg; - Next Generation Instagram Search</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
 
@@ -17,12 +17,14 @@
         <link rel="apple-touch-icon" sizes="152x152" href="/images/favicons/apple-touch-icon-152x152.png">
         <link rel="apple-touch-icon" sizes="180x180" href="/images/favicons/apple-touch-icon-180x180.png">
         <link rel="icon" type="image/png" href="/images/favicons/favicon-32x32.png" sizes="32x32">
-        <link rel="icon" type="image/png" href="/images/favicons/android-chrome-192x192.png" sizes="192x192">
+        <link rel="icon" type="image/png" href="/images/favicons/favicon-194x194.png" sizes="194x194">
         <link rel="icon" type="image/png" href="/images/favicons/favicon-96x96.png" sizes="96x96">
+        <link rel="icon" type="image/png" href="/images/favicons/android-chrome-192x192.png" sizes="192x192">
         <link rel="icon" type="image/png" href="/images/favicons/favicon-16x16.png" sizes="16x16">
         <link rel="manifest" href="/images/favicons/manifest.json">
+        <link rel="mask-icon" href="/images/favicons/safari-pinned-tab.svg" color="#ffffff">
         <link rel="shortcut icon" href="/images/favicons/favicon.ico">
-        <meta name="msapplication-TileColor" content="#12151a">
+        <meta name="msapplication-TileColor" content="#da532c">
         <meta name="msapplication-TileImage" content="/images/favicons/mstile-144x144.png">
         <meta name="msapplication-config" content="/images/favicons/browserconfig.xml">
         <meta name="theme-color" content="#ffffff">
@@ -30,6 +32,7 @@
         <!-- build:css(.) styles/vendor.css -->
         <!-- bower:css -->
         <link rel="stylesheet" href="bower_components/normalize.css/normalize.css" />
+
         <!-- endbower -->
         <!-- endbuild -->
         <!-- build:css(.tmp) styles/main.css -->
@@ -50,20 +53,9 @@
     <!--Header-->
     <header>
         <div class="header__wrapper">
-
-            <!--Credits and Logo-->
             <div class="header__top">
-                <div class="header__logo header__logo--snooper"></div>
+                <div class="header__logo header__logo--snooper"><svg id="logo-header"></svg></div>
                 <div class="header__logo header__logo--clubhouse">By <a href="http://weareclubhouse.com">Clubhouse Studios</a></div>
-            </div>
-
-            <!--Search Bar-->
-            <div class="header__search hidden">
-                <div class="header__search__column header__search__label"></div>
-                <div class="header__search__column header__search__column--right header__search__info">
-                    <div class="header__search__info__text"></div><!--
-                   --><div class="header__search__info__button button pause hidden">PAUSE</div>
-                </div>
             </div>
         </div>
     </header>
@@ -72,76 +64,72 @@
     <div class='content'>
         <div class="wrapper" id='main-wrapper'>
             <!--Form-->
-            <div class="content-column">
-                <form class='search-form' id='search-form-new'>
-                    <div class="search-form__column">
-                        <div class="search-form__column__icon search-form__column__icon--names"></div>
-                        <span class="search-form__column__input" contentEditable="true" id="#search-names" data-default="ADD A USERNAME"></span>
-                    </div><!--
-                    --><div class="search-form__column">
-                        <div class="search-form__column__icon search-form__column__icon--tags"></div>
-                        <span class="search-form__column__input" contentEditable="true" id="#search-tags" data-default="ADD UP TO 3 HASHTAGS"></span>
-                    </div><!--
-                    --><div class="search-form__column">
-                        <div class="search-form__column__icon search-form__column__icon--keywords"></div>
-                        <span class="search-form__column__input" contentEditable="true" id="#search-keywords" data-default="ADD KEYWORDS"></span>
-                    </div>
-                </form>
-            </div>
-            <!--Form-->
-            <div class="search-form-holder content-column">
+            <div class="content-column content-column--left">
                 <form class='search-form' id='search-form'>
-                    <!--Main Search-->
-                    <div class="search-form__row search-form__row--main">
-                        <div class='search-form-main__row'>
-                            <div class='search-form-main__item search-form-main__item--left'>
-                                <div class="input-icon">@</div><!--
-                                --><div class='input-field'><input type='text' name='users' id='users' placeholder='Add up to 5 usernames' value="" class='input-text input-text--blue-border'/></div>
-                            </div>
-                            <div class='search-form-main__item search-form-main__item--right'>
-                                <div class="input-icon input-icon--padded-extra">#</div><!--
-                                --><input type='text' name='tags' id='tags' placeholder='Add up to 5 hashtags' value="" class='input-text input-text--blue-border'/>
-                            </div>
+                    <div class="search-form__column">
+                        <!--Icon-->
+                        <div class="search-form__column__icon search-form__column__icon--names"></div>
 
-                        </div>
-                        <div class='search-form-main__row search-form-main__row--mentions '>
-                            <input type="radio" name="name-search-type" id="owned" value="owned" checked><label for="owned">Owned Photos</label>
-                            <input type="radio" name="name-search-type" id="mentions" value="mentions"><label for="mentions">@Mentions</label>
-                        </div>
+                        <!--Input-->
+                        <span class="search-form__column__input" contentEditable="true" id="search-names" data-default="ADD A USERNAME"></span>
+
+                        <!--Options-->
+                        <span class="search-form__optionset search-form__optionset--hidden" id="options-names">
+                          <span class="search-form__option search-form__option--selected" data-id='owned'>Owned photos</span>
+                          <span class="search-form__option-spacer">or</span>
+                          <span class="search-form__option" data-id='mentions'>@mentions</span>
+                        </span>
+                    </div><!--
+                    --><div class="search-form__column">
+                    <!--Icon-->
+                        <div class="search-form__column__icon search-form__column__icon--tags"></div>
+
+                        <!--Input-->
+                        <span class="search-form__column__input" contentEditable="true" id="search-tags" data-default="ADD UP TO 3 TAGS"></span>
+
+                        <!--Options-->
+                        <span class="search-form__optionset search-form__optionset--hidden" id="options-tags">
+                          <span class="search-form__option search-form__option--selected" data-id='all'>Every tag</span>
+                          <span class="search-form__option-spacer">or</span>
+                          <span class="search-form__option" data-id='any'>any tag</span>
+                        </span>
+                    </div><!--
+                    --><div class="search-form__column">
+                        <!--Icon-->
+                        <div class="search-form__column__icon search-form__column__icon--keywords"></div>
+
+                        <!--Input-->
+                        <span class="search-form__column__input" contentEditable="true" id="search-keywords" data-default="ADD KEYWORDS"></span>
                     </div>
 
-                    <!--Keywords-->
-                    <div class="search-form__row search-form__row--keywords">
-                        <div class="search-keywords-wrapper">
-                            <span>
-                                <span class='keywords-text-big'>Keywords to highlight: </span>
-                                <span id='keywords-counts'></span>
-                            </span>
-
-                        </div>
-                        <div class="search-keywords-wrapper">
-                            <div class="button edit right" id="button-edit-keywords">EDIT</div>
-                        </div>
-                    </div>
-
-                    <!--Submit-->
-                    <div class="search-form__row search-form__row--footer">
-                        <div class="button export left inactive" id="button-data-export">EXPORT DATA</div>
-                        <input type='submit' class="button search right" value='SUBMIT'/>
+                    <!--Submit button-->
+                    <div class="search-form__button">
+                        <input type='submit' class="button button--search right" value='SEARCH'/>
                     </div>
                 </form>
             </div>
+            <!--include "content-filters.html"-->
             <!--Results-->
             <div class="result-list content-column"></div>
-            <!--Loader-->
-            <div class="content-column">
-                <div class="loader hidden">
-                    <div class="loader-circles">
-                        <div class="bounce1"></div>
-                        <div class="bounce2"></div>
-                        <div class="bounce3"></div>
-                    </div>
-                </div>
+        </div>
+    </div>
+
+    <!--Search Bar-->
+    <div class="searchbar searchbar--hidden">
+        <!--LHS-->
+        <div class="searchbar__column">
+            <div class="table">
+                <!--<div class="table-cell"><span class="searchbar__logo"></span></div>-->
+                <div class="table-cell"><span class="searchbar__info"></span></div>
+            </div>
+        </div>
+
+        <!--RHS-->
+        <div class="searchbar__column searchbar__column--right">
+            <div class="table">
+                <div class="table-cell"><span class="searchbar__count"><span class="searchbar__count__value">0</span><span class='searchbar__count__found'>Found</span></span></div>
+                <div class="table-cell"><span class="button button--pause button--bordered button--spaced-right" id="searchbar-button-info"></span></div>
+                <div class="table-cell"><span class="button button--export button--bordered" id="searchbar-button-export">EXPORT</span></div>
             </div>
         </div>
     </div>
@@ -150,6 +138,7 @@
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
+
     <script src="bower_components/get-style-property/get-style-property.js"></script>
     <script src="bower_components/get-size/get-size.js"></script>
     <script src="bower_components/matches-selector/matches-selector.js"></script>
@@ -166,8 +155,12 @@
     <script src="bower_components/isotope/js/layout-modes/fit-rows.js"></script>
     <script src="bower_components/isotope/js/layout-modes/masonry.js"></script>
     <script src="bower_components/signals/dist/signals.js"></script>
+
     <script src="bower_components/greensock/src/uncompressed/TweenMax.js"></script>
     <script src="bower_components/handlebars/handlebars.js"></script>
+
+    <script src="bower_components/Snap.svg/dist/snap.svg.js"></script>
+
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:js({app,.tmp}) scripts/main.js -->
@@ -176,12 +169,14 @@
     <script src="scripts/Site.js"></script>
     <script src="scripts/Helper.js"></script>
     <script src="scripts/_utilities/APIManager.js"></script>
+    <script src="scripts/_utilities/ImageManager.js"></script>
     <script src="scripts/_modules/ExportManager.js"></script>
     <script src="scripts/_modules/FormManager.js"></script>
     <script src="scripts/_modules/InfoBar.js"></script>
     <script src="scripts/_modules/ItemManager.js"></script>
     <script src="scripts/_modules/ItemViewer.js"></script>
     <script src="scripts/_modules/Lightbox.js"></script>
+    <script src="scripts/_modules/SnooperEyes.js"></script>
 
     <!-- endbuild -->
     <!--Template 'ITEM RESULTS'-->
@@ -201,16 +196,32 @@
                     </div>
                 </div>
             </div>
-        </a><!--
-        --></script>
+        </a>
+    </script>
 
     <!--Template 'ITEM FULLVIEW'-->
     <script id="item-fullview-template" type="text/x-handlebars-template">
         <div class="itemview">
-
             <!--Columns-->
             <div class="itemview__column itemview__column--image">
-                <div class="itemview__image" style='background-image:url({{image_url}});'>
+                <!--Loader-->
+                <div class="table table--fullsize">
+                    <div class="table-cell">
+                        <!--Loader-->
+                        <div class="content-column">
+                            <div class="loader hidden">
+                                <div class="loader-circles">
+                                    <div class="bounce1"></div>
+                                    <div class="bounce2"></div>
+                                    <div class="bounce3"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Image-->
+                <div class="itemview__image"> <!--style='background-image:url({{image_url}});'-->
                     <!--Photo Tagging-->
                     <div class="itemview__phototag {{user-tag-status}}">
                         <div class="table-cell itemview__phototag__icon"><span class="icon icon--tag"></span></div>
@@ -308,20 +319,6 @@
             <div class="lightbox-content-wrapper">
                 <div class="lightbox-content">{{{content}}}</div>
             </div>
-        </div>
-    </script>
-
-    <!--Template 'TITLE BAR'-->
-    <script id="title-template" type="text/x-handlebars-template">
-        <div class="result-list-bar {{extras}}" id="title-bar{{id}}">
-            <div class="result-list-bar__column result-list-bar-title">{{title}}</div>
-        </div>
-    </script>
-
-    <!--Template 'SUBTITLE BAR'-->
-    <script id="subtitle-template" type="text/x-handlebars-template">
-        <div class="result-list-bar no-background {{extras}}" id="title-bar{{id}}">
-            <div class="result-list-bar__column result-list-bar-title">{{title}}</div>
         </div>
     </script>
 

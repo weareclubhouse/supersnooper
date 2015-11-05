@@ -37,10 +37,8 @@ $fontPath: '../fonts/';
 @mixin fontFace($_style: 'regular') {
     @if($_style == 'medium') {
         font-family: 'brandon_grotesquemedium';
-
     } @else {
         font-family: 'brandon_grotesque_regularRg';
-
     }
 
     //Anti alias on all fonts

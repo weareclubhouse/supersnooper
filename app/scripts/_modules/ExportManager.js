@@ -26,7 +26,7 @@ SuperSnooper.Modules.ExportManager = function(_url) {
     this.url = _url;
 
     //Put an event on the 'export data' button
-    $('#button-data-export').on('click', function() {
+    $('#searchbar-button-export').on('click', function() {
         this.exportInit();
     }.bind(this));
 };
@@ -40,5 +40,5 @@ SuperSnooper.Modules.ExportManager.constructor = SuperSnooper.Modules.ExportMana
 //--------------------------------------------------------------------------
 SuperSnooper.Modules.ExportManager.prototype.exportInit = function() {
     //Load
-    document.location.href = this.url + 'data-export.php?cacheID=' + SuperSnooper.api.searchTerms.searchID;
+    document.location.href = this.url + 'data-export.php?cacheID=' + SuperSnooper.api.searchTerms.searchID + '&date=' + SuperSnooper.api.searchTerms.date;
 };

@@ -1,50 +1,3 @@
-/*----------------------------------------------
-- ITEM CONTENT
----------------------------------------------*/
-/*
-.item-content {
-    //Table
-    display:table-cell;
-    vertical-align: middle;
-
-
-    //Mini table for icons
-    &.item-content-table { display:table;}
-    &.item-title { white-space: nowrap; overflow:hidden; max-width:100px; }
-    &.item-content-value { padding-left:7px; font-size:13px; }
-    &.item-content-icon {
-        width:19px; height:19px;
-        padding-left:10px;
-        padding-top:2px;
-
-        &--large { //circle on image view page
-            width:23px;
-            height:23px;
-        }
-
-        &--padding-left-extra {
-            padding-left:17px;
-        }
-
-        &--right {
-          text-align:right;
-          padding-left:0px;
-          padding-right:16px;
-        }
-
-        &--right-small {
-          text-align:right;
-          padding-left:0px;
-          padding-right:10px;
-        }
-    }
-
-    //Hide specific bits
-   &.hidden {
-        display:none;
-   }
-}*/
-
 
 /*----------------------------------------------
 - ITEM VIEWER
@@ -210,8 +163,10 @@
     background-size:cover;
     display:block;
     pointer-events:all;
-    margin-bottom:15px;
-    position:relative;
+    //margin-bottom:15px;
+    position:absolute;
+    top:0;
+    left:0;
 
 }
 
@@ -228,6 +183,7 @@
         //padding-left:10px;
         width:23px;
         height:21px;
+        @include shadowing('object');
     }
 
     &__name {
@@ -238,7 +194,7 @@
         @include fontFace('medium');
 
         //Text shadow - matches the filtering on results items
-        text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.6);
+        @include shadowing('text');
     }
 
     &--hidden { display:none; }
@@ -276,11 +232,11 @@
     &__time { @include fontFace('medium'); position:absolute; right:$viewerCommentsPaddingSide; top:0; }
     &__username { @include fontFace('medium'); }
     &__comment {
-        //These have alternative weird names so they don't get replaced with our text searches
-        .highlight-purple,._h004 { color:$purple; }
-        .highlight-pink,._h003 { color:$pink; }
-        .highlight-green,._h002 { color:$green; }
-        .highlight-blue,._h001 { color:$blue; }
+        //These have alternative weird names so they don't get replaced with our text searches -
+        //.__h004 { color:#cc0000; @include fontFace('medium'); } //What is this?
+        .__h003 { color:$blue; @include fontFace('medium'); } //KEYWORD match
+        .__h002 { color:$red; @include fontFace('medium'); } //USER match
+        .__h001 { color:$yellow; @include fontFace('medium'); } //HASHTAG match
     }
 
     //Splitter

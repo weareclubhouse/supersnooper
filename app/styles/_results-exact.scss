@@ -1,0 +1,210 @@
+/*----------------------------------------------
+- LIST
+---------------------------------------------*/
+.result-list {
+    @include hardwareAccelerate();
+}
+
+.result-list-items {
+    text-align:center;
+    margin:0 auto;
+}
+
+
+/*----------------------------------------------
+- ITEMS
+---------------------------------------------*/
+//Wrapper for each item
+.result-item-wrapper {
+    //Force size
+    width:$resultItemSize;
+    height:$resultItemSize;
+    margin:0 0 2px 0;
+
+    //Hover functionality
+    &:hover {
+        //Show the cover tint
+        .result-item__cover {
+            @include opacity(1);
+            &__icon { transform:scale(1, 1); }
+        }
+
+    }
+
+    //Items
+    .result-item {
+        //Main item
+        width:$resultItemSize;
+        height:$resultItemSize;
+        background-color:#efefef;
+        overflow:hidden;
+        display:inline-block;
+        background-size:cover;
+        background-position:center;
+        overflow:hidden;
+        text-align:left;
+        color:#fff;
+
+        //Font (titles and values)
+        font-size:14px;
+        @include fontFace('medium');
+
+
+        /*----------------------------------------------
+        - COVER
+        ---------------------------------------------*/
+        &__cover {
+            position:absolute;
+            top:0;
+            left:0;
+            display:table;
+            width:$resultItemSize;
+            height:$resultItemSize;
+            background-color:rgba(0, 0, 0, 0.4);
+            @include opacity(0);
+
+            //Transition (for hover)
+            @include transition(opacity 0.5s ease-in);
+
+            //Icon Holder
+            &__icon {
+                display:table-cell;
+                vertical-align: middle;
+
+                //Hide and transition (for hover)
+                @include transition(opacity 0.7s ease-in-out, transform 0.35s ease-out);
+                transform:scale(0, 0);
+
+                //Icon in the middle
+                .icon {
+                    background-size:35px 35px;
+                    background-position:center;
+                }
+            }
+        }
+
+
+        /*----------------------------------------------
+        - HEADER (@name)
+        ---------------------------------------------*/
+        &__header {
+            //display:table;
+            width:$resultItemSize - 20px;
+            height:28px;
+            overflow:hidden;
+            padding:0;
+            overflow:hidden;
+            position:absolute;
+            top:0;
+            left:0;
+            margin:10px;
+
+            //Box model
+            @include innerBox();
+
+            //Title
+            &__title {
+                height:28px;
+                padding-left:10px;
+                padding-right:10px;
+                @include innerBox();
+                @include roundedEdges(14px);
+
+                //Text shadow
+                @include shadowing('text');
+
+                //Overflow
+                white-space: nowrap;
+                overflow:hidden;
+                text-overflow: ellipsis;
+                max-width:$resultItemSize - 100;
+
+                //This alignment seems to work even when parent isn't a 'table'
+                display:table-cell;
+                vertical-align: middle;
+            }
+        }
+
+
+        /*----------------------------------------------
+        - ITEM FOOTER (COMMENTS, LIKES etc.)
+        ---------------------------------------------*/
+        &__footer {
+            position:absolute;
+            bottom:0;
+            left:0;
+            display:table;
+            width:100%;
+            height:43px;
+            overflow:hidden;
+
+            //Box model
+            @include innerBox();
+
+            //ICons
+            &__icon {
+                width:20px;
+                height:17px;
+
+                //Shadow (required for light images)
+                @include shadowing('object');
+
+                //Comments slightly narrower
+                &--comments { width:17px;}
+
+                //Padding
+                padding-top:4px; //aligns them a bit better against the text
+                padding-left:19px; //Pad between our items
+            }
+
+            &__value {
+                padding-left:7px;
+
+                //Text shadow
+                @include shadowing('text');
+            }
+        }
+
+
+        /*----------------------------------------------
+        - KEYWORD MATCH VARIATIONS ON THE ITEM AS A WHOLE
+        ---------------------------------------------*/
+        &--keyword-match {
+            .result-item__header__title {
+                background-color:$blue;
+                text-shadow: 0 0 #222;
+            }
+        }
+    }
+}
+
+
+/*----------------------------------------------
+- BAR
+---------------------------------------------*/
+.result-list-bar {
+    width:100%;
+    margin-bottom:10px;
+    height:43px;
+    background-color: rgba(159, 159, 159, 0.3);
+    padding:0px 13px;
+    text-align:left;
+    overflow:hidden;
+    display:table;
+    @include innerBox();
+
+    //Subtitle bar
+    &.no-background {
+        background-color: rgba(159, 159, 159, 0);
+    }
+
+    //Padding top
+    &.padded-top { margin-top:80px; }
+    &.padded-top-small { margin-top:30px; }
+}
+
+//Column within an item
+.result-list-bar__column {
+    display:table-cell;
+    vertical-align:middle;
+}

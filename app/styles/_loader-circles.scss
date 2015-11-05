@@ -1,5 +1,6 @@
 .loader {
   opacity:1;
+  @include transition(opacity 0.5s ease-in-out);
 
   &.hidden {
     opacity:0;
@@ -16,7 +17,7 @@
 .loader-circles > div {
   width: 12px;
   height: 12px;
-  background-color: $green;
+  background-color: $loadColour3;
   overflow:hidden;
   border-radius: 100%;
   display: inline-block;
@@ -30,13 +31,13 @@
 .loader-circles .bounce1 {
   -webkit-animation-delay: -0.32s;
   animation-delay: -0.32s;
-  background-color: $blue;
+  background-color: $loadColour1;
 }
 
 .loader-circles .bounce2 {
   -webkit-animation-delay: -0.16s;
   animation-delay: -0.16s;
-  background-color: $pink;
+  background-color: $loadColour2;
 }
 
 @-webkit-keyframes bouncedelay {

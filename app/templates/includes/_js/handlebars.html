@@ -15,16 +15,23 @@
                 </div>
             </div>
         </div>
-    </a><!--
-    --></script>
+    </a>
+</script>
 
 <!--Template 'ITEM FULLVIEW'-->
 <script id="item-fullview-template" type="text/x-handlebars-template">
     <div class="itemview">
-
         <!--Columns-->
         <div class="itemview__column itemview__column--image">
-            <div class="itemview__image" style='background-image:url({{image_url}});'>
+            <!--Loader-->
+            <div class="table table--fullsize">
+                <div class="table-cell">
+                    include "content-loader.html"
+                </div>
+            </div>
+
+            <!--Image-->
+            <div class="itemview__image"> <!--style='background-image:url({{image_url}});'-->
                 <!--Photo Tagging-->
                 <div class="itemview__phototag {{user-tag-status}}">
                     <div class="table-cell itemview__phototag__icon"><span class="icon icon--tag"></span></div>
@@ -122,20 +129,6 @@
         <div class="lightbox-content-wrapper">
             <div class="lightbox-content">{{{content}}}</div>
         </div>
-    </div>
-</script>
-
-<!--Template 'TITLE BAR'-->
-<script id="title-template" type="text/x-handlebars-template">
-    <div class="result-list-bar {{extras}}" id="title-bar{{id}}">
-        <div class="result-list-bar__column result-list-bar-title">{{title}}</div>
-    </div>
-</script>
-
-<!--Template 'SUBTITLE BAR'-->
-<script id="subtitle-template" type="text/x-handlebars-template">
-    <div class="result-list-bar no-background {{extras}}" id="title-bar{{id}}">
-        <div class="result-list-bar__column result-list-bar-title">{{title}}</div>
     </div>
 </script>
 

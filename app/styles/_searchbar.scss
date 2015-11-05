@@ -1,0 +1,114 @@
+/*----------------------------------------------
+- SEARCH INFO BAR (FIXED TO BOTTOM OF SCREEN)
+---------------------------------------------*/
+.searchbar {
+    display:table;
+    width:100%;
+    z-index:100;
+    color:#fff;
+    @include innerBox();
+    //height:120px;
+    background-color:$red;
+    padding:0 50px;
+    pointer-events:all; //block clickthroughs
+    position:fixed;
+    bottom:0;
+    left:0;
+    opacity:1;
+    height:$headerHeight;
+    overflow:hidden;
+
+    //Animation
+    transition: all 0.4s ease-in-out;
+
+    //Hidden off screen
+    &--hidden {
+        opacity:0;
+        bottom:-$headerHeight;
+    }
+
+    //Columns
+    &__column {
+        display: table-cell;
+        vertical-align: middle;
+        text-align:left;
+
+        //Variants
+        &--right {
+            text-align:right;
+
+            //Push the table over to the right hand side
+            .table { margin-left:auto; }
+        }
+    }
+
+    //Logo
+    &__logo {
+        display:inline-block;
+        width:54px;
+        height:54px;
+        background-image:url(../images/icon-logo-eye-alt.svg);
+        background-size:100% auto;
+        background-repeat:no-repeat;
+        background-position:center;
+    }
+
+    //Info Text
+    &__info {
+        margin-left:20px;
+        display:inline-block;
+        line-height:26px;
+        padding-bottom:2px;
+    }
+
+    //Count Text
+    &__count {
+        display:inline-block;
+        text-align: center;
+        padding-left:27px;
+        padding-right:27px;
+        padding-top:10px; //fixes vertical alignment
+
+        &__value {
+            @include fontFace('medium');
+            font-size:30px;
+            line-height:20px;
+        }
+
+        &__found {
+            display:block;
+            margin-top:-4px;
+        }
+    }
+
+    //Bold text
+    .bold {
+        @include fontFace('medium');
+    }
+
+    /*
+
+    //Label (main search title)
+    &__label {
+        padding-left:40px;
+    }
+
+
+    &__info__text {
+        display:inline-block;
+        padding-right:26px;
+    }
+
+     //Button
+    &__info__button {
+        //Use pointer events
+        pointer-events:all;
+
+        &.hidden {
+            width:0;
+            opacity:0;
+            pointer-events:none;
+            cursor:default;
+        }
+    }*/
+}

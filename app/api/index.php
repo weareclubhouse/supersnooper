@@ -13,6 +13,8 @@
     //  INCLUDES
     //--------------------------------------------------------
     require_once('config.php');
+    require_once('_lib/DataCacher.php');
+    require_once('_lib/TokenManager.php');
 
 
     //--------------------------------------------------------
@@ -24,31 +26,10 @@
 
 
     ///--------------------------------------------------------
-    //  GLOBALS
-    //---------------------------------------------------------
-    define('API_URL', 'https://api.instagram.com/v1/');
-    define('COUNT', 100); //default amount of items to fetch per request, to be honest instagram decides this as 33 on the endpoints anyway, but we set it high just in case it is allowed
-
-
-    ///--------------------------------------------------------
     //  RANDOM ACCESS TOKEN FROM OUR FILES
     //---------------------------------------------------------
-    $_fileList = scandir('../auth/');
-    $_tokens = array();
-    for($i=0;$i<count($_fileList);$i++) {
-        if(strpos($_fileList[$i], 'ACCESSTOKEN_') === 0) {
-            array_push($_tokens, '../auth/' . $_fileList[$i]);
-        }
-    }
-
-    //print_r($_tokens);
-    if(count($_tokens) > 0) {
-        $_token = json_decode(file_get_contents($_tokens[rand(0, count($_tokens) - 1)]), true);
-        define('ACCESS_TOKEN', $_token['access_token']);
-    } else {
-        //Go to the auth page
-        header('Location: ../auth/');
-    }
+    $tokenManager = new TokenManager('_tokens/');
+    define('ACCESS_TOKEN', $tokenManager -> getAccessToken());
 
 
     ///--------------------------------------------------------
@@ -60,114 +41,95 @@
     //  DEFAULT PARAMS
     //---------------------------------------------------------
     $postVars = array(
-        'type' => 'tag', //user, tag
-        'search' => 'dog', //search terms (either names or tags)
-        'filterType' => '', //user, tag, blank
-        'filters' => '',
-        'keywords' => '',
+        //Vars from form
+        'names' => '',
+        'tags' => '',
+        'keywords' => '', //we don't really do anything with these here
+        'names-method' => '',
+        'tags-method' => '',
+
+        //Lookups (only happen at the start of the query)
         'userID' => '',
-        'tagCount' => '',
+
+        //Caching bits
+        'date' => '1970-01-01',
+        'searchID' => '', //unique search ID for caching
+
+        //Pagination
         'itemStartID' => '',
-        'searchID' => '' //unique search ID for caching
+
+        //Method
+        'searchMethod' => 'none' //none, user, tag
     );
 
+    //Loop through the postVars array and replace any items that were POSTED/GETTED in
     foreach($postVars as $_key => $_value) {
         if(isset($_REQUEST[$_key])) {
             $postVars[$_key] = ($_REQUEST[$_key]);
         }
     }
 
-    //Split up the filters
-    if($postVars['filters'] !== '') {
-        $postVars['filters'] = explode(',', $postVars['filters']);
+    ///--------------------------------------------------------
+    //  CALCULATE A SEARCH METHOD
+    //---------------------------------------------------------
+    if($postVars['names-method'] === 'owned' && $postVars['names'] !== '') {
+        $postVars['searchMethod'] = 'user';
+    } else if($postVars['tags'] !== '') {
+        $postVars['searchMethod'] = 'tag';
     }
 
-    //Split up the keywords
-    if($postVars['keywords'] !== '') {
-        //Split at pipe and empty the old value out
-        $_keys = explode('|', $postVars['keywords']);
-        $postVars['keywords'] = array();
 
-        //Loop
-        for($i=0;$i<count($_keys);$i++) {
-            array_push($postVars['keywords'], explode(',', $_keys[$i]));
+    ///--------------------------------------------------------
+    //  DO WE NEED TO GET THE USER INFO/MEDIA COUNT, OR A TAG COUNT
+    //---------------------------------------------------------
+    if($postVars['itemStartID'] === '') {
+        if($postVars['searchMethod'] === 'user') {
+            //Lookup the user (use the first one that we find who matches)
+            lookupUser($postVars['names']);
+        } else if($postVars['searchMethod'] === 'tag') {
+            //Lookup the tag (use the first one that we find which matches)
+            lookupTag($postVars['tags']);
         }
     }
 
 
     ///--------------------------------------------------------
-    //  DO WE NEED TO GET THE USER INFO?
+    // CACHING - USED FOR DATA EXPORT
     //---------------------------------------------------------
-    if($postVars['type'] === 'user' && $postVars['userID'] === '') {
-        //Lookup the user (use the first one that we find who matches)
-        $_users = lookupUser($postVars['search'], 1);
-        if(count($_users) > 0) {
-            $_dataResponse['user'] = $_users[0];
-            $postVars['userID'] = $_dataResponse['user']['id'];
-        }
-    } else if($postVars['type'] === 'tag' && $postVars['tagCount'] === '') {
-        //Lookup the user (use the first one that we find who matches)
-        $_tag = lookupTag($postVars['search'], 1);
-        if(count($_tag) > 0) {
-            $_dataResponse['tag'] = $_tag;
-            //$postVars['tagCount'] = $_tag['media_count'];
-        }
-    }
-
-
-    //--------------------------------------------------------
-    //  DO WE NEED TO GENERATE AN ID FOR THIS SEARCH
-    //---------------------------------------------------------
-    if($postVars['searchID'] === '') {
-        $postVars['searchID'] = uniqid();
-        $_dataResponse['searchID'] = $postVars['searchID'];
-
-    }
+    $_cacheController = new DataCacher(CACHE_FOLDER, CACHE_FILE_EXTENSION); //init the cache controller
+    $_cacheController -> start($postVars['date'], $postVars['searchID']); //start caching
 
 
     ///--------------------------------------------------------
-    //  CACHING (USE FOR DATA EXPORT)
+    //  NOW DO THE MAIN CALL AND STORE IT IN A 'PRE-FILTER' OBJECT
     //---------------------------------------------------------
-
-    //ID for the cache file
-    $_cacheID = checkCacheFolder() . $postVars['searchID'] . '.' . CACHE_FILE_EXTENSION;
-    $_cacheData = array();
-
-    if(file_exists($_cacheID)) {
-        //Read in the current data
-        $_cacheData = json_decode(file_get_contents($_cacheID), true);
-    }
-
-
-    ///--------------------------------------------------------
-    //  NOW DO THE MAIN CALL
-    //---------------------------------------------------------
-    if($postVars['type'] === 'user' && $postVars['userID'] !== '') {
+    if($postVars['searchMethod'] === 'user' && $postVars['userID'] !== '') {
         //Getting USER photos - https://api.instagram.com/v1/users/{user-id}/media/recent/?access_token=ACCESS-TOKEN
-        //MAX_TIMESTAMP, MIN_TIMESTAMP, MIN_ID, MAX_ID are allowed here... (we could use the timestamps as well?)
         $_dataResponse['data-pre-filter'] = callAPI('users/' . $postVars['userID'] . '/media/recent/', ($postVars['itemStartID'] !== '') ? 'max_id=' . $postVars['itemStartID'] : '');
-    } else if($postVars['type'] === 'tag') {
+    } else if($postVars['searchMethod'] === 'tag') {
         //Getting TAG related photos - /tags/tag-name/media/recent
-        //MIN_TAG_ID && MAX_TAG_ID are used here, so we need to do our own filtering to decide if there is more to fetch...
-        //FIRST hashtag is the important one
-        $_tags = explode(',', $postVars['search']);
+        //FIRST hashtag is the ONLY important one for fetching the data (there will almost always only be one anyway - except on ALL tag searches)
+        $_tags = explode(',', $postVars['tags']);
         $_dataResponse['data-pre-filter'] = callAPI('tags/' . $_tags[0] . '/media/recent/', ($postVars['itemStartID'] !== '') ? 'max_tag_id=' . $postVars['itemStartID'] : '');
     }
 
 
-
-
-
-
     ///--------------------------------------------------------
-    //  FILTER THE RESPONSE (SAVES US DOING IT CLIENT SIDE)
+    //  PROCESS THE RESPONSE DATA
     //---------------------------------------------------------
 
-    //Filter flags
-    $_filter = ($postVars['filterType'] !== '') ? true : false; //normal filtering
+    //Are we bothering to filter the returned items
+    $_filter = (($postVars['searchMethod'] === 'user' && $postVars['tags'] !== '') || ($postVars['searchMethod'] === 'tag' && $postVars['names'] !== '')) ? true : false; //normal filtering
+    $_preCheckPassed = true;
 
-    //Loop through the data
+    //Store a total count
+    $_dataResponse['processedCount'] = count($_dataResponse['data-pre-filter']);
+
+    //Loop through the data that we found
     for($i=0;$i<count($_dataResponse['data-pre-filter']);$i++) {
+
+        //Precheck flag
+        $_preCheckPassed = true;
 
         //New variables
         $_dataResponse['data-pre-filter'][$i]['matchList'] = array();
@@ -179,83 +141,54 @@
 
 
         ///--------------------------------------------------------
-        //  FLAG UP MATCHES AND WHERE THEY ARE IF THIS IS A HASH TAG SEARCH
+        //  IF THIS IS AN 'ALL' HASH TAG SEARCH, THEN DO THAT FIRST AS A PRE-CHECK, IF THAT FAILS, THEN THIS ITEM CAN BE SKIPPED
         //---------------------------------------------------------
-        if($postVars['type'] === 'tag') {
-            //checkFilters($i, '#', array($postVars['search']));
+        if($postVars['tags'] !== '' && $postVars['tags-method'] === 'all') {
+            $_preCheckPassed = checkFilters($i, '#', explode(',', $postVars['tags']), $postVars['tags-method']);
         }
 
         ///--------------------------------------------------------
         //  FILTERING
         //---------------------------------------------------------
-        if($_filter === true) {
-            //Act
-            if($postVars['filterType'] === 'user') {
-                ///--------------------------------------------------------
-                // USERS
-                //---------------------------------------------------------
+        if($_preCheckPassed) {
+            if($_filter === true) {
+                //Filtered
+                if($postVars['searchMethod'] === 'tag') {
+                    ///--------------------------------------------------------
+                    // BASE SEARCH IS 'TAGS', SO WE ARE LOOKING FOR A 'USERNAME' MATCH
+                    //---------------------------------------------------------
 
-                //Looking for a username match anywhere!
-                checkFilters($i, '@', $postVars['filters']);
+                    //Looking for a username match anywhere!
+                    checkFilters($i, '@', explode(',', $postVars['names']));
 
-                //If we found a match for the username, let's lookup where the tag was as well...
-                if(count($_dataResponse['data-pre-filter'][$i]['matchList']) > 0) {
-                    checkFilters($i, '#', array($postVars['search']));
+                    //If we found a match for the username, let's lookup the (tags) as well
+                    if(count($_dataResponse['data-pre-filter'][$i]['matchList']) > 0) {
+                        checkFilters($i, '#', explode(',' , $postVars['tags']));
+                    }
+
+                } else if($postVars['searchMethod'] === 'user') {
+                    ///--------------------------------------------------------
+                    //  BASE SEARCH IS 'USER', SO WE ARE LOOKING FOR A 'TAG' MATCH
+                    //---------------------------------------------------------
+                    checkFilters($i, '#', explode(',', $postVars['tags']));
                 }
-
-
-            } else if($postVars['filterType'] === 'tag') {
-                ///--------------------------------------------------------
-                //  TAGS
-                //---------------------------------------------------------
-                checkFilters($i, '#', $postVars['filters']);
+            } else if($postVars['tags'] !== '') {
+                //Not filtered, but if we are looking for tags, we should mark them up anyway
+                checkFilters($i, '#', explode(',' , $postVars['tags']));
             }
 
+            //Only add to cached list if we found some kind of a match
+            if(count($_dataResponse['data-pre-filter'][$i]['matchList']) > 0 || $_filter === false) {
+                //Add to cache
+                $_cacheController -> add($_dataResponse['data-pre-filter'][$i]);
+
+                //Add to the main list
+                array_push($_dataResponse['data'], $_dataResponse['data-pre-filter'][$i]);
+            }
         }
-
-        //Only add to cached list if we found some kind of a match (we only add certain fields, else the cache gets massive)
-        if(count($_dataResponse['data-pre-filter'][$i]['matchList']) > 0 || $_filter === false) {
-            $_itemData = array(
-                'id' => $_dataResponse['data-pre-filter'][$i]['id'],
-                'username' => $_dataResponse['data-pre-filter'][$i]['user']['username'],
-                'avatar' => $_dataResponse['data-pre-filter'][$i]['user']['profile_picture'],
-                'tags' => implode($_dataResponse['data-pre-filter'][$i]['tags'], ','),
-                'caption' => '',
-                'image' => $_dataResponse['data-pre-filter'][$i]['images']['standard_resolution']['url'],
-                'tagged_in_photo' => (in_array('tagged', $_dataResponse['data-pre-filter'][$i]['matchList'])) ?  'Yes' : 'No',
-                'comments' => '',
-                'link' => $_dataResponse['data-pre-filter'][$i]['link'],
-                'created_time' => $_dataResponse['data-pre-filter'][$i]['created_time'],
-                'count_likes' => $_dataResponse['data-pre-filter'][$i]['likes']['count'],
-                'count_comments' => $_dataResponse['data-pre-filter'][$i]['comments']['count']
-            );
-
-            //Caption goes in regardless
-            if(isset($_dataResponse['data-pre-filter'][$i]['caption']) && isset($_dataResponse['data-pre-filter'][$i]['caption']['text'])) {
-                $_itemData['caption'] = $_dataResponse['data-pre-filter'][$i]['caption']['text'];
-            }
-
-            //Push any comments in that we think are relevant
-            for($j=0;$j<count($_dataResponse['data-pre-filter'][$i]['matchList']);$j++) {
-                if(strpos($_dataResponse['data-pre-filter'][$i]['matchList'][$j], 'comment') !== false) {
-                    $_itemData['comments'] .= ($_itemData['comments'] !== '') ? '
-
-                    ' : '';
-                    $_itemData['comments'] .= $_dataResponse['data-pre-filter'][$i]['comments']['data'][substr($_dataResponse['data-pre-filter'][$i]['matchList'][$j], 7)]['text'];
-                }
-            }
-
-            //Add this to our cached data
-            array_push($_cacheData, $_itemData);
-        }
-
-
-
-        //Add to the main list regardless (since all the data gets pushed back to front end regardless)
-        array_push($_dataResponse['data'], $_dataResponse['data-pre-filter'][$i]);
     }
 
-    //Remove the pre-filter array
+    //Remove the pre-filter array, since it is a load of data we don't need to spit back out
     unset($_dataResponse['data-pre-filter']);
 
 
@@ -268,19 +201,20 @@
     ///--------------------------------------------------------
     //  WRITE THE CACHE OUT
     //--------------------------------------------------------
-    $_cache = fopen($_cacheID, 'w+');
-    fwrite($_cache, json_encode($_cacheData));
-    fclose($_cache);
+    $_cacheController -> save();
 
 
     ///--------------------------------------------------------
     //  FILTER CHECK
     //--------------------------------------------------------
-    function checkFilters($_id, $_prefix, $_filters) {
+    function checkFilters($_id, $_prefix, $_filters, $_method = 'any') {
         //Vars
-        global $postVars, $_dataResponse;
+        global $_dataResponse;
         $_match = true;
-        $_itemInfo = &$_dataResponse['data-pre-filter'][$_id]; //pointer to the data object
+        $_itemInfo = &$_dataResponse['data-pre-filter'][$_id]; //pointer to the data object - this ensures it gets updated
+
+        //Track how many of our items were matched (this allows us to filter out items that don't match on an ALL hashtag search)
+        $_filtersMatched = array();
 
         //Make a matches array
         for($i=0;$i<count($_filters);$i++) {
@@ -291,6 +225,7 @@
             if(strpos(strtolower($_itemInfo['caption']['text']), $_searchValue) !== false) {
                 array_push($_itemInfo['matches'], 'caption|' . $_searchValue);
                 (!in_array('caption', $_itemInfo['matchList'])) ? array_push($_itemInfo['matchList'], 'caption') : null;
+                (!in_array($i, $_filtersMatched)) ? array_push($_filtersMatched, $i) : null;
             }
 
             //Comments
@@ -299,6 +234,7 @@
                     if(strpos(strtolower($_itemInfo['comments']['data'][$j]['text']), $_searchValue) !== false) {
                         array_push($_itemInfo['matches'], 'comment' . $j . '|' . $_searchValue);
                         (!in_array('comment' . $j, $_itemInfo['matchList'])) ? array_push($_itemInfo['matchList'], 'comment' . $j) : null;
+                        (!in_array($i, $_filtersMatched)) ? array_push($_filtersMatched, $i) : null;
                     }
                 }
             }
@@ -309,8 +245,21 @@
                     if('@' . trim(strtolower($_itemInfo['users_in_photo'][$j]['user']['username'])) === $_searchValue) {
                         array_push($_itemInfo['matches'], 'tagged|' . $_searchValue);
                         (!in_array('tagged', $_itemInfo['matchList'])) ? array_push($_itemInfo['matchList'], 'tagged') : null;
+                        (!in_array($i, $_filtersMatched)) ? array_push($_filtersMatched, $i) : null;
                     }
                 }
+            }
+        }
+
+        //If method was ALL and the counts don't match, then this is not valid
+        if($_method === 'all') {
+            //Reset the arrays
+            $_itemInfo['matchList'] = array();
+            $_itemInfo['matches'] = array();
+
+            //OK
+            if(count($_filtersMatched) !== count($_filters)) {
+                $_match = false;
             }
         }
 
@@ -323,22 +272,56 @@
     //  LOOKUP A USER FROM A NAME
     //---------------------------------------------------------
     function lookupUser($_name) {
-        $_response = callAPI('users/search', 'q=' . $_name, '', 1, true, false); //don't check for pagination!
-        return $_response;
+        //Globals
+        global $_dataResponse, $postVars;
+
+        //Look the user up by searching for them
+        $_items = callAPI('users/search', 'q=' . $_name, '', 100, true, false); //don't check for pagination!
+        $_itemID = 0;
+
+        //Attempt to match the user correctly
+        if(count($_items) > 0) {
+            for($i = 0; $i < count($_items);$i ++) {
+                if(strtolower($_items[$i]['username']) === $_name) {
+                    $_itemID = $i;
+                    break;
+                }
+            }
+        }
+
+        //If we found a user, we now need to get the info etc.
+        if(isset($_items[$_itemID])) {
+            //Get the user info (so we can get their media count)
+            $_info = callAPI('users/' . $_items[$_itemID]['id'] . '/', '', '', -1, true, false);
+
+            //Store a count for items
+            $_dataResponse['itemCount'] = $_info['counts']['media']; //push back an item count
+
+            //Store the ID
+            $_dataResponse['userID'] = $_items[$_itemID]['id']; //send back to the front end, so we can re-post for future calls
+            $postVars['userID'] = $_dataResponse['userID']; //required for further API calls on this execution
+        }
     }
 
 
     ///--------------------------------------------------------
     //  LOOKUP A TAG FROM A NAME
     //---------------------------------------------------------
-    function lookupTag($_name) {
-        $_response = callAPI('tags/' . $_name, '', '', 1, true, false); //don't check for pagination!
-        return $_response;
+    function lookupTag($_tags) {
+        //Globals
+        global $_dataResponse, $postVars;
+
+        //Split the tags (there is only one set of circumstances where there will be more than one here = multiple tag search with ALL ticked)
+        $_tags = explode(',', $_tags);
+        $_info = callAPI('tags/' . $_tags[0], '', '', 1, true, false); //don't check for pagination!
+
+        //Store a count
+        $_dataResponse['itemCount'] = $_info['media_count'];
     }
 
 
     ///--------------------------------------------------------
-    //  LOOKUP A USER FROM A NAME
+    //  CALL THE API
     //---------------------------------------------------------
     function callAPI($_method, $_query = '', $_startID = '', $_count = -1, $_stripDataNode = true, $_checkForPagination = true) {
         //Global response object
@@ -351,13 +334,10 @@
         $_url = API_URL . $_method . '?' . $_query . '&access_token=' . ACCESS_TOKEN . '&count=' . $_count;
 
         //Start ID
-        if($_startID !== '') {
-            $_url .= '&next_max_id=' . $_startID;
-        }
+        if($_startID !== '') { $_url .= '&next_max_id=' . $_startID; }
 
         //Add the URL into our list
         array_push($_dataResponse['calls'], $_url);
-
 
         //Curl
         $_curl = curl_init($_url);

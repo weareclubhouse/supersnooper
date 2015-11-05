@@ -8,6 +8,7 @@
     "signals": "~1.0.0",
     "greensock": "~1.16.1",
     "handlebars": "~3.0.0",
-    "normalize.css": "~3.0.2"
+    "normalize.css": "~3.0.2",
+    "Snap.svg": "snap.svg#~0.4.1"
   }
 }

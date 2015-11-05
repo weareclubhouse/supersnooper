@@ -4,35 +4,30 @@
 $headerHeight: 115px;
 $headerMargin: 50px;
 
-
 /*----------------------------------------------
 - COLOURS NEW
 ---------------------------------------------*/
 $blue: #2274b5; //#0089d1; //00b1bf
-
-/*----------------------------------------------
-- COLOURS OLDER
----------------------------------------------*/
-$blueAlt: #009bbc; //used on input fields
-$pink: #9f489e;
-$purple: #730064;
-$green: #69c386;
-$red: #ed2940;
-$redAlt: #a60024;
-$beige: #f1eee5; //download image button and image view header
+$red: #c92929;
+$yellow: #eebc32;
+$beige: #f1eee5; //button background etc. and header on image viewer
 
 //RGB Versions
-$beigeRGB: 241, 238, 229; //download image button
-$blueRGB: 0, 137, 209;
-$blueAltRGB: 0, 155, 188;
-$pinkRGB: 159, 72, 158;
-$purpleRGB: 115, 0, 100;
-$greenRGB: 105, 195, 134;
-$redRGB: 237, 41, 64;
-$redAltRGB: 166, 0, 36;
+$beigeRGB: 241, 238, 229; //most buttons
 
-//
-$radioSize:16px;
+/*----------------------------------------------
+- COLOURS DEPRECATED
+---------------------------------------------*/
+/*$pink: #9f489e;
+$purple: #730064;
+$green: #69c386;*/
+
+/*----------------------------------------------
+- LOAD COLOURS
+---------------------------------------------*/
+$loadColour1: $red;
+$loadColour2: $yellow;
+$loadColour3: $blue;
 
 /*----------------------------------------------
 - ITEMS / CONTENT GRID

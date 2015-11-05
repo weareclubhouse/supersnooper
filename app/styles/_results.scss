@@ -2,7 +2,7 @@
 - LIST
 ---------------------------------------------*/
 .result-list {
-    //@include hardwareAccelerate();
+    text-align: left;
 }
 
 .result-list-items {
@@ -17,9 +17,30 @@
 //Wrapper for each item
 .result-item-wrapper {
     //Force size
-    width:$resultItemSize;
-    height:$resultItemSize;
-    margin:0 0 2px 0;
+    position:relative;
+    width:100%;
+    display:inline-block;
+    margin:0 0 3px 0;
+    overflow:hidden;
+
+    //@include hardwareAccelerate();
+
+    //@media (min-width: 2102px) { width:20%; }
+    //@media (max-width: 766px) { @include widthInColumns(1, $resultItemSize, $resultItemMargin); }
+    //@media (max-width: 1100px) { @include widthInColumns(2, $resultItemSize, $resultItemMargin); }
+    @media (min-width: 480px) { width:calc(100% / 2); } //4 columns
+    @media (min-width: 770px) { width:calc(100% / 3); } //4 columns
+    @media (min-width: 1110px) { width:calc(100% / 4); } //4 columns
+    @media (min-width: 1440px) { width:calc(100% / 5); } //5 columns
+    @media (min-width: 1768px) { width:calc(100% / 6); } //6 columns
+    @media (min-width: 2100px) { width:calc(100% / 7); } //6 columns
+
+    //This is a bit of a hack to pad the items height by 100% of the width, giving it the illusion of being the same height as it is wide
+    &:before {
+        content:     "";
+        display:     block;
+        padding-top: 100%; /* initial ratio of 1:1*/
+    }
 
     //Hover functionality
     &:hover {
@@ -34,8 +55,14 @@
     //Items
     .result-item {
         //Main item
-        width:$resultItemSize;
-        height:$resultItemSize;
+        position:absolute;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+        width:100%;
+        height:100%;
+        background-color:#efefef;
         overflow:hidden;
         display:inline-block;
         background-size:cover;
@@ -43,10 +70,14 @@
         overflow:hidden;
         text-align:left;
         color:#fff;
+        margin:0 3px;
 
         //Font (titles and values)
         font-size:14px;
         @include fontFace('medium');
+
+        //Accelerate
+        @include hardwareAccelerate();
 
 
         /*----------------------------------------------
@@ -57,8 +88,8 @@
             top:0;
             left:0;
             display:table;
-            width:$resultItemSize;
-            height:$resultItemSize;
+            width:100%;
+            height:100%;
             background-color:rgba(0, 0, 0, 0.4);
             @include opacity(0);
 
@@ -88,7 +119,7 @@
         ---------------------------------------------*/
         &__header {
             //display:table;
-            width:$resultItemSize - 20px;
+            //width:$resultItemSize - 20px;
             height:28px;
             overflow:hidden;
             padding:0;
@@ -110,13 +141,13 @@
                 @include roundedEdges(14px);
 
                 //Text shadow
-                text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.6);
+                @include shadowing('text');
 
                 //Overflow
                 white-space: nowrap;
                 overflow:hidden;
                 text-overflow: ellipsis;
-                max-width:$resultItemSize - 100;
+                max-width:95%; //$resultItemSize - 100
 
                 //This alignment seems to work even when parent isn't a 'table'
                 display:table-cell;
@@ -146,8 +177,7 @@
                 height:17px;
 
                 //Shadow (required for light images)
-                -webkit-filter: drop-shadow( 0px 0px 5px rgba(0, 0, 0, 0.34) );
-                filter: drop-shadow( 0px 0px 5px rgba(0, 0, 0, 0.34) );
+                @include shadowing('object');
 
                 //Comments slightly narrower
                 &--comments { width:17px;}
@@ -161,7 +191,7 @@
                 padding-left:7px;
 
                 //Text shadow
-                text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.6);
+                @include shadowing('text');
             }
         }
 
@@ -176,35 +206,4 @@
             }
         }
     }
-}
-
-
-/*----------------------------------------------
-- BAR
----------------------------------------------*/
-.result-list-bar {
-    width:100%;
-    margin-bottom:10px;
-    height:43px;
-    background-color: rgba(159, 159, 159, 0.3);
-    padding:0px 13px;
-    text-align:left;
-    overflow:hidden;
-    display:table;
-    @include innerBox();
-
-    //Subtitle bar
-    &.no-background {
-        background-color: rgba(159, 159, 159, 0);
-    }
-
-    //Padding top
-    &.padded-top { margin-top:80px; }
-    &.padded-top-small { margin-top:30px; }
-}
-
-//Column within an item
-.result-list-bar__column {
-    display:table-cell;
-    vertical-align:middle;
 }

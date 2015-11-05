@@ -26,16 +26,6 @@
   background-color:rgba(nth($_colour, 1), nth($_colour, 2), nth($_colour, 3), $_alpha);
 }
 
-/*
-@mixin transition($transition-property, $transition-time, $method) {
-    -webkit-transition: $transition-property $transition-time $method;
-    -moz-transition: $transition-property $transition-time $method;
-    -ms-transition: $transition-property $transition-time $method;
-    -o-transition: $transition-property $transition-time $method;
-    transition: $transition-property $transition-time $method;
-}
-*/
-
 
 //--------------------------------------------------------------------------
 // TRANSITIONS
@@ -47,9 +37,8 @@
   -webkit-transition: $transition;
   transition:         $transition;
 
-  //Also accelerate?
+  //Also accelerate? NO NO NO
   //@include hardwareAccelerate();
-
 }
 
 
@@ -65,6 +54,17 @@
   -webkit-perspective: 1000;
 }
 
+
+//--------------------------------------------------------------------------
+// HARDWARE ACCELERATE
+//--------------------------------------------------------------------------
+@mixin browserStyling($_style: none) {
+    -webkit-appearance:     $_style;
+    -moz-appearance:        $_style;
+    -ms-appearance:         $_style;
+    -o-appearance:          $_style;
+    appearance:             $_style;
+}
 
 
 //-------------------------------------
@@ -82,4 +82,17 @@
 //--------------------------------------------------------------------------
 @mixin widthInColumns($_count, $_width, $_spacing) {
   max-width:$_count * ($_width + $_spacing);
+}
+
+
+//--------------------------------------------------------------------------
+// SHADOWING
+//--------------------------------------------------------------------------
+@mixin shadowing($_type: 'text') {
+  @if($_type == 'text') {
+    text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.6);
+  } @else {
+    -webkit-filter: drop-shadow( 0px 0px 5px rgba(0, 0, 0, 0.34) );
+    filter: drop-shadow( 0px 0px 5px rgba(0, 0, 0, 0.34) );
+  }
 }

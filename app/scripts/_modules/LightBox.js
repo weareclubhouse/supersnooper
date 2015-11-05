@@ -89,9 +89,6 @@ SuperSnooper.Modules.LightBox.prototype.open = function(_content, _contentType) 
 SuperSnooper.Modules.LightBox.prototype.close = function(_clearContent) {
     //Do anything extra?
     _clearContent = (_clearContent === undefined) ? true : _clearContent;
-    if(_clearContent && this.lightBoxContentType === 'keywords') {
-        SuperSnooper.forms.updateKeywords(false);
-    }
 
     //Blank the content type
     this.lightBoxContentType = '';

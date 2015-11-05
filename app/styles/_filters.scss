@@ -1,0 +1,40 @@
+/*----------------------------------------------
+- FILTERS
+---------------------------------------------*/
+.filters {
+    @include fontFace('medium');
+
+
+    &__title {
+        display: inline-block;
+        margin-right:18px;
+    }
+
+    ul {
+        display: inline;
+        line-height:0;
+        list-style-type: none;
+        margin:0;
+        padding:0;
+
+    }
+
+    &__option {
+        display: inline-block;
+        @include roundedEdges(14px);
+        @include innerBox();
+        @include transition(background-color 0.4s ease-in-out);
+        background-color:none;
+        padding:14px 12px;
+        display:inline-block;
+        height:28px;
+        cursor:pointer;
+        margin:0;
+        margin-bottom:30px;
+
+        //Selected
+        &--selected, &:hover {
+            background-color:$beige;
+        }
+    }
+}

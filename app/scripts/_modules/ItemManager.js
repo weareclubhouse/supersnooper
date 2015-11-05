@@ -24,14 +24,15 @@
 //  MAIN CLASS
 //--------------------------------------------------------------------------
 SuperSnooper.Modules.ItemManager = function() {
+    //How many to add at once (this will be removed with new stretchy code)
+    this.batchProcessMax = 5;
+
     //Items
     this.items = [];
     this.nextItem = -1;
-    this.batchProcessMax = 1;
 
-    //Dates
-    this.dateOldest = '';
-    this.dateOldestTime = 0;
+    //Listen for API signals
+    SuperSnooper.Signals.api.add(function(_method, _vars) { this.apiEvent(_method, _vars); }.bind(this));
 
     //Setup a temporary ISOTOPE object
     this.isotopes = {};
@@ -42,44 +43,39 @@ SuperSnooper.Modules.ItemManager.constructor = SuperSnooper.Modules.ItemManager;
 
 
 //--------------------------------------------------------------------------
+//  API EVENT
+//--------------------------------------------------------------------------
+SuperSnooper.Modules.ItemManager.prototype.apiEvent = function(_method, _vars) {
+    if(_method === 'search-init') {
+        //SEARCH init
+        this.reset();
+    } else if(_method === 'items-add') {
+        //NEW ITEMS
+        this.addGroup(_vars.items);
+    }
+};
+
+//--------------------------------------------------------------------------
 //  START / RESET
 //--------------------------------------------------------------------------
 SuperSnooper.Modules.ItemManager.prototype.reset = function() {
-    //Dates
-    this.dateOldest = new Date();
-    this.dateOldestTime = this.dateOldest.getTime();
-
-     //Kill the interval if it is running
-     if(this.itemAddTimer !== undefined) {
+    //Kill the interval if it is running
+    if(this.itemAddTimer !== undefined) {
         clearInterval(this.itemAddTimer);
         this.itemAddTimer = null;
-     }
+    }
+
+    //Clear the item list
+    this.items = [];
+    this.nextItem = -1;
 
     //Isotope group
-    this.createIsotopeGroup('main');
+    if(SuperSnooper.helper.ISOTOPE_ENABLED) {
+        this.createIsotopeGroup('main');
+    }
 };
 
 
-//--------------------------------------------------------------------------
-//  ADD SOME ITEMS (THIS JUST ADDED THEM ALL, RATHER THAN USING A QUEUE SYSTEM)
-//--------------------------------------------------------------------------
-/*SuperSnooper.DisplayManager.prototype.itemsAdd = function(_items) {
-    //Add to the list
-    var _item;
-    var i;
-
-    for(i=0;i<_items.length;i++) {
-        //Add to the item list
-        this.items.push(_items[i]);
-
-        //Add
-        _item = this.createResultsItem(this.items.length - 1, this.items[this.items.length - 1]);
-        this.isotopes.dummy.insert(_item);
-    }
-
-    //Links
-    this.setupResultItemLinks();
-};*/
 
 
 //--------------------------------------------------------------------------
@@ -87,27 +83,16 @@ SuperSnooper.Modules.ItemManager.prototype.reset = function() {
 //--------------------------------------------------------------------------
 SuperSnooper.Modules.ItemManager.prototype.addGroup = function(_items) {
 
-    //Add to the list (also check for the oldset date)
-    var _stamp;
+    //Add to the list
     for(var i=0;i<_items.length;i++) {
-        //Timestamp for item
-        _stamp = parseInt(_items[i].created_time * 1000);
-
-        //Older than previous oldest date?
-        if(_stamp < this.dateOldestTime) {
-            //Older date!
-            this.dateOldestTime = _stamp;
-            this.dateOldest = new Date(_stamp);
-        }
-
         //Add to the item list
-        this.items.push(_items[i]);
+        this.items.push({data:_items[i], item:null});
     }
 
     //TEMPORARY quick open of one of the items
     /*if(this.opened === undefined) {
         var _id = Math.floor(Math.random() * _items.length);
-        SuperSnooper.Signals.viewer.dispatch('open', {id:_id, data:this.items[_id]});
+        SuperSnooper.Signals.viewer.dispatch('open', {id:_id, data:this.items[_id].data});
         this.opened = true;
     }*/
 
@@ -132,8 +117,14 @@ SuperSnooper.Modules.ItemManager.prototype.addNextItem = function() {
         //Is there a valid item?
         if(this.nextItem < this.items.length) {
             //Create the item
-            var _item = this.getItemHTML(this.nextItem, this.items[this.nextItem]);
-            this.isotopes.main.insert(_item);
+            var _item = this.getItemHTML(this.nextItem, this.items[this.nextItem].data);
+
+            //Add to the HTML
+            if(SuperSnooper.helper.ISOTOPE_ENABLED) {
+                this.isotopes.main.insert(_item);
+            } else {
+                $('.result-list').append(_item);
+            }
         } else {
             //Stop!
             this.nextItem--;
@@ -160,7 +151,7 @@ SuperSnooper.Modules.ItemManager.prototype.setupResultItemLinks = function() {
         $(_links[i]).off('.items');
         $(_links[i]).on('click.items', function(_id) {
             //Dispatch an event
-            SuperSnooper.Signals.viewer.dispatch('open', {id:_id, data:this.items[_id]});
+            SuperSnooper.Signals.viewer.dispatch('open', {id:_id, data:this.items[_id].data});
             return false;
         }.bind(this, i));
     }
@@ -178,8 +169,8 @@ SuperSnooper.Modules.ItemManager.prototype.getItemHTML = function(_id, _info) {
     var _html = SuperSnooper.templates.item({
         'title': '@' + _info.user.username,
         //'title':_date.getDate() + '.' + _date.getMonth() + '.' + _date.getFullYear() + '-' + _date.getHours() + ':' + _date.getMinutes() + ':' + _date.getSeconds(),
-        'likes':SuperSnooper.helper.padString(_info.likes.count),
-        'comments':SuperSnooper.helper.padString(_info.comments.count),
+        'likes':SuperSnooper.helper.padString(_info.likes.count, '0', 2, true),
+        'comments':SuperSnooper.helper.padString(_info.comments.count, '0', 2, true),
         'image':_info.images.low_resolution.url,
         'date':_info.created_time,
         'extra-classes':(_info.keywordMatches.words.length !== 0) ? 'result-item--keyword-match' : '',
@@ -205,7 +196,7 @@ SuperSnooper.Modules.ItemManager.prototype.createIsotopeGroup = function(_id) {
         //LAYOUT
         masonry: {
             //isFitWidth: true
-            columnWidth: 334, //item size is 332
+            //columnWidth: 334, //item size is 332
             //rowHeight: 332, //item size is 332
 
             gutter: 0

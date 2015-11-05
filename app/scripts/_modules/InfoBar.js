@@ -26,10 +26,38 @@ SuperSnooper.Modules.InfoBar = function(_itemManager) {
     //Reference the item manager
     this.itemManager = _itemManager;
 
+    //Counts
+    this.counts = {
+        total:0,
+        snooped:0,
+        matched:0
+    };
+
+
+    //Dates
+    this.dateOldest = new Date();
+    this.dateOldestTime = -1;
+
+    //State
+    this.state = '';
+
+    //Labels
+    this.buttonLabels = {
+        'info':{
+            'init': 'STARTING SEARCH',
+            'go': 'PAUSE SEARCH', //match the names of the events from the API
+            'pause': 'RESUME SEARCH',
+            'stop': 'SEARCH COMPLETE'
+        }
+    };
+
     //Elements
-    this.bar = $('.header__search');
-    this.infoButton = $('.header__search__info__button');
-    this.exportButton = $('#button-data-export');
+    this.bar = $('.searchbar'); //formerly header__search
+    this.infoButton = $('#searchbar-button-info');
+    this.exportButton = $('#searchbar-button-export');
+
+    //Listen for API signals
+    SuperSnooper.Signals.api.add(function(_method, _vars) { this.apiEvent(_method, _vars); }.bind(this));
 
     //Pause button event
     this.infoButton.on('click', function(_event) {
@@ -46,28 +74,98 @@ SuperSnooper.Modules.InfoBar.constructor = SuperSnooper.Modules.InfoBar;
 //  INIT (STARTING A SEARCH)
 //--------------------------------------------------------------------------
 SuperSnooper.Modules.InfoBar.prototype.init = function() {
-    //Remove the hidden state on the bar
-    this.bar.removeClass('hidden');
+    //Show me
+    this.show(true);
 
-    //Hide the pause button until we get our first set of results
-    this.infoButton.addClass('hidden');
-    this.infoButton.html('PAUSE');
+    //Set the status
+    this.setState('init');
 
-    //Hide the data export button
-    this.exportButton.addClass('inactive');
+    //Dates
+    this.dateOldest = new Date();
+    this.dateOldestTime = -1;
 
-    //Set the text
-    $('.header__search__label').html('Starting search...');
-    $('.header__search__info__text').html('');
+    //Reset the 'counts'
+    this.counts = {
+        total:0,
+        snooped:0,
+        matched:0
+    };
+
+    //Blank our text...
+    this.setText();
 };
 
 
 
 //--------------------------------------------------------------------------
-//  HIDE (NOT CURRENTLY USED)
+//  SET STATE
 //--------------------------------------------------------------------------
-SuperSnooper.Modules.InfoBar.prototype.hide = function() {
-    this.bar.addClass('hidden');
+SuperSnooper.Modules.InfoBar.prototype.setState = function(_state) {
+    //INFO button
+    if(_state === 'init') {
+        //Icon, but inactive
+        this.infoButton.removeClass('button--noclick button--complete');
+        this.infoButton.addClass('button--pause button--inactive');
+    } else if(_state === 'stop') {
+        //Stop, so make unclickable and remove the pause icon
+        this.infoButton.removeClass('button--pause button--inactive');
+        this.infoButton.addClass('button--noclick button--complete');
+    } else {
+        //Icon and clickable
+        this.infoButton.removeClass('button--complete button--inactive button--noclick');
+        this.infoButton.addClass('button--pause');
+    }
+
+    //Text
+    this.infoButton.html(this.buttonLabels.info[_state]);
+
+    //EXPORT button
+    if(_state === 'init') {
+        this.exportButton.addClass('button--inactive');
+    } else {
+        this.exportButton.removeClass('button--inactive');
+    }
+
+    //Store the state
+    this.state = _state;
+};
+
+
+//--------------------------------------------------------------------------
+//  API EVENT
+//--------------------------------------------------------------------------
+SuperSnooper.Modules.InfoBar.prototype.apiEvent = function(_method, _vars) {
+    if(_method === 'search-init') {
+        //SEARCH init - completely new
+        this.init();
+    } else if(_method === 'search-start') {
+        //THIS IS CALLED EVERYTIME A NEW PAGE OF DATA IS FETCHED - don't really need to do anything?
+    } else if(_method === 'items-add') {
+        //NEW ITEMS
+
+        //If we are waiting for init, then change the state
+        if(this.state === 'init') { this.setState('go'); }
+
+        //Update the search panel with our new text!
+        this.update(_vars);
+    } else if(_method === 'state-set') {
+        //STATE set
+        if(_vars.state === 'go' || _vars.state === 'pause' || _vars.state === 'stop') {
+            this.setState(_vars.state);
+        }
+    }
+};
+
+
+//--------------------------------------------------------------------------
+//  SHOW / HIDE
+//--------------------------------------------------------------------------
+SuperSnooper.Modules.InfoBar.prototype.show = function(_show) {
+    if(_show) {
+        this.bar.removeClass('searchbar--hidden');
+    } else {
+        this.bar.addClass('searchbar--hidden');
+    }
 };
 
 
@@ -75,78 +173,44 @@ SuperSnooper.Modules.InfoBar.prototype.hide = function() {
 //  SEARCH BAR UPDATE
 //--------------------------------------------------------------------------
 SuperSnooper.Modules.InfoBar.prototype.update = function(_vars) {
-    //Pause button
-    this.infoButton.removeClass('hidden');
+    //Counts
+    this.counts.matched += _vars.items.length;
+    this.counts.total += _vars.itemCountTotal;
+    this.counts.snooped += _vars.itemCountProcessed;
 
-    //If we actually have some data, then show the export data button
-    this.exportButton.removeClass('inactive');
+    //Oldest date update
+    var _stamp;
+    for(var i=0;i<_vars.items.length;i++) {
+        //Timestamp for item
+        _stamp = parseInt(_vars.items[i].created_time * 1000);
 
-    //Build our strings
-    var _left = (_vars.complete) ? 'Search complete.' : 'Searching';
-    var _right = (_vars.complete) ? 'We‘ve ' : 'So far, we‘ve ';
-    _right += 'found <b>' + this.itemManager.items.length + '</b> dating back to <b>' + SuperSnooper.helper.padString(this.itemManager.dateOldest.getUTCDate()) + '-' + SuperSnooper.helper.padString(this.itemManager.dateOldest.getUTCMonth() + 1) + '-' + (this.itemManager.dateOldest.getYear() - 100) + '</b>';
-
-    //Title text LHS
-    if(!_vars.complete) {
-        if(SuperSnooper.helper.searchTerms.type === 'user') {
-            //USER - we don't know the count here...
-
-            //Add on text for keywords and mentions
-            if(SuperSnooper.helper.searchTerms.filters !==  '') {
-                _left += ' for tags';
-                _left += (this.searchTerms.keywords.length > 0) ? ' and keywords' : '';
-            } else if(SuperSnooper.helper.searchTerms.keywords.length > 0) {
-                _left += ' for keywords';
-            }
-        } else {
-            //TAG, so we need to know the count
-            _left += ' <b>' + _vars.searchTerms.tagCount + '</b> tagged photos';
-
-            //Add on text for keywords and mentions
-            if(SuperSnooper.helper.searchTerms.filters !==  '') {
-                _left += ' for @mentions';
-                _left += (SuperSnooper.helper.searchTerms.keywords.length > 0) ? ' and keywords' : '';
-            } else if(SuperSnooper.helper.searchTerms.keywords.length > 0) {
-                _left += ' for keywords';
-            }
-
-            //$('.header__search__label').html('Checked ' + _vars.itemCountProcessed + ' of ' + _vars.searchTerms.tagCount + ' tagged photos'); //_vars.itemCountProcessed
+        //Older than previous oldest date?
+        if(_stamp < this.dateOldestTime || this.dateOldestTime === -1) {
+            //Older date!
+            this.dateOldestTime = _stamp;
+            this.dateOldest = new Date(_stamp);
         }
-
-        //Dots
-        _left += '...';
-    }
-
-    //If
-    if(this.itemManager.items.length !== _vars.itemCountProcessed ) {
-        //Show how many we have found
-        _right += ', checked <b>' + _vars.itemCountProcessed + '</b>';
     }
 
     //Set the text
-    $('.header__search__label').html(_left);
-    $('.header__search__info__text').html(_right);
-
-    //Dan's Notes
-    /*
-    HASHTAG & @MENTIONS
-    Left: Searching 122,327 tagged photos for keywords and @mentions
-    Right: So far, we‘ve checked 6547 dating back to 14-03-15
+    this.setText();
+};
 
 
-    User searches keywords alongside a hashtag:
-    Left:Searching 122,327 tagged photos for keywords
-    Right: So far, we‘ve checked 6547 dating back to 14-03-15
+//--------------------------------------------------------------------------
+//  SET THE TEXT
+//--------------------------------------------------------------------------
+SuperSnooper.Modules.InfoBar.prototype.setText = function() {
 
-    User searches @Mentions alongside a hashtag:
-    Left: Searching 122,327 tagged photos for @Mentions
-    Right: So far, we‘ve checked 6547 dating back to 14-03-15
+    //Info text
+    var _info = 'Initialising the snoop<br/>Please wait a moment...';
+    if(this.state !== 'init') {
+        var _date = SuperSnooper.helper.padString(this.dateOldest.getUTCDate()) + '-' + SuperSnooper.helper.padString(this.dateOldest.getUTCMonth() + 1) + '-' + (this.dateOldest.getYear() - 100);
+        var _prefix = (this.state === 'stop') ? 'We‘ve ' : 'So far, we‘ve ';
+        _info = '<span class="bold">' + this.counts.total.toLocaleString() + '</span> images exist.<br/>' + _prefix + ' snooped through <span class="bold">' + this.counts.snooped.toLocaleString() + '</span> dating back to <span class="bold">' + _date + '</span>';
+    }
+    $('.searchbar__info').html(_info);
 
-    @MENTIONS only
-    Right: So far, we‘ve displayed 6547 dating back to 14-03-15
-
-    HASHTAGS only
-    Left: We‘ve found 122,327 tagged photos
-    Right: So far, we‘ve displayed 6547 dating back to 14-03-15
-    */
+    //Matched count
+    $('.searchbar__count__value').html(this.counts.matched);
 };

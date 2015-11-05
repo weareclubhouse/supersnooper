@@ -6,95 +6,84 @@
     height:$buttonHeight;
     display:inline-block;
     pointer-events:all;
+
     text-align:center;
     font-size:14px;
     letter-spacing: 1px;
     @include fontFace('medium');
-    padding-top:16px;
+
+    background-color:$beige; //default colour
     background-size:auto 40%;
     background-repeat:no-repeat;
     background-position:center left $paddingGeneral;
+
+    padding-top:18px;
     padding-left:30px;
     cursor:pointer;
-    opacity:1;
+    @include opacity(1);
     @include innerBox();
 
     //Transitions
-    @include transition(all 0.5s ease-in-out);
+    @include transition(opacity 0.5s ease-in-out, background-color 0.5s ease-in-out);
 
-    //Minor adjustments
-    &.over {
-        //Change the colour...
-    }
-    &.padded { margin-left:$paddingGeneral; }
-    &.block { display:block; }
-    &.hidden { opacity:0; }
+    //Default hover
+    &:hover { @include backgroundRGBAlpha($beigeRGB, $buttonRollOverAlpha); }
 
-    //Right
-    &.right { float:right; }
-
-    //Types
-
-    //Download Image button on Item Viewer
-    &--download {
-        background-color:$beige;
-        background-image:url(../images/icon-download.svg);
-        &.over { @include backgroundRGBAlpha($beigeRGB, $buttonRollOverAlpha); }
+    //Hidden
+    &--hidden {
+        @include opacity(0);
+        pointer-events:none !important;
+        cursor:default !important;
+        margin-left:0 !important;
+        margin-right:0 !important;
+        width:0 !important;
+        min-width:0 !important;
+        padding:0 !important;
     }
 
-    //Login button on auth path
-    &--instagram {
-        background-color:$beige;
-        background-image:url(../images/icon-instagram.svg);
-        &:hover { @include backgroundRGBAlpha($beigeRGB, $buttonRollOverAlpha); }
+    //Inactive
+    &--inactive {
+        pointer-events:none !important;
+        cursor:default !important;
+        @include opacity(0.1);
     }
 
-    &.search {
-        width:160px;
-        background-color:$blue;
-        background-image:url(../images/icon-search.svg);
-        &.over { @include backgroundRGBAlpha($blueRGB, $buttonRollOverAlpha); }
+    //Noclick (Search complete!)
+    &--noclick {
+        pointer-events:none !important;
+        cursor:default !important;
     }
 
-    &.pause {
-        padding-left:0px;
-        width:100px;
-        background-color:$redAlt;
-        &.over { @include backgroundRGBAlpha($redAltRGB, $buttonRollOverAlpha); }
+    //Bordered (search bar)
+    &--bordered {
+        background-color:rgba(0, 0, 0, 0);
+        border:1px solid #fff;
+        &:hover { @include backgroundRGBAlpha($beigeRGB, 0.1); }
     }
 
-    &.export {
-        width:160px;
-        background-color:$blue;
-        background-image:url(../images/icon-add.svg);
-        &.over { @include backgroundRGBAlpha($blueRGB, $buttonRollOverAlpha); }
-    }
+    //Spaced
+    &--spaced-left { margin-left:10px; }
+    &--spaced-right { margin-right:10px; }
 
-    &.add {
-        width:210px;
-        background-color:$purple;
-        background-image:url(../images/icon-add.svg);
-        &.over { @include backgroundRGBAlpha($purpleRGB, $buttonRollOverAlpha); }
-    }
 
-    &.update {
-        width:210px;
-        background-color:$blue;
-        background-image:url(../images/icon-search.svg);
-        &.over { @include backgroundRGBAlpha($blueRGB, $buttonRollOverAlpha); }
-    }
+    //DOWNLOAD Image button on Item Viewer
+    &--download { background-image:url(../images/icon-download.svg); }
 
-    &.edit {
-        width:136px;
-        background-color:$purple;
-        background-image:url(../images/icon-edit.svg);
-        &.over { @include backgroundRGBAlpha($purpleRGB, $buttonRollOverAlpha); }
-    }
+    //LOGIN button on auth path
+    &--instagram { background-image:url(../images/icon-instagram.svg); }
 
-    //Active used for toggling state on export data button
-    &.inactive {
-        opacity:0;
-        pointer-events: none;
-        cursor:default;
-    }
+    //SEARCH submit button
+    &--search { background-image:url(../images/icon-search.svg); }
+
+    //PAUSE / PROGRESS
+    &--pause { background-image:url(../images/icon-pause.svg); }
+
+    //EXPORT
+    &--export { background-image:url(../images/icon-download-alt.svg); }
+
+    //COMPLETE
+    &--complete { background-image:none; padding-left:0; }
+
+    //SNOOP - not used currently
+    &--snoop { background-image:url(../images/icon-logo-eye-alt.svg); }
  }

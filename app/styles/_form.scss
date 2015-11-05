@@ -1,10 +1,9 @@
 /*----------------------------------------------
 - SEARCH FORM NEW
 ---------------------------------------------*/
-
 .search-form {
     text-align:left;
-    margin:0 auto 120px auto;
+    margin:0 auto 75px auto;
     display:block;
     width:100%;
 
@@ -13,6 +12,7 @@
         display:inline-block;
         max-width:33%;
         text-align: left;
+        vertical-align: top;
 
         //Space between items
         padding-right:30px;
@@ -22,6 +22,14 @@
 
         @include innerBox();
         &:last-of-type { max-width:34%; padding-right:0; }
+
+        //Media Query
+        @media (max-width: 800px) {
+            max-width:100%;
+            display:block;
+            padding:0;
+            &:not(:first-of-type) { margin-top:14px; }
+        }
 
         //Icons
         &__icon {
@@ -39,10 +47,13 @@
 
         }
 
+        //Input boxes
         &__input {
             //Wrapping
             padding:0 1px; //without this you get some weird clippig on focus
             white-space: nowrap;
+
+
             overflow:hidden;
             text-overflow: ellipsis;
             margin-left:10px;
@@ -56,7 +67,7 @@
             }
 
             width:auto;
-            min-width:30px;
+            min-width:100px;
             max-width:calc(100% - 43px); //30px for the icon and then 10px for the margin
             display:inline-block;
             outline:0;
@@ -69,313 +80,94 @@
             &--default {
                 color:#aaa;
             }
+
+            //Hide line breaks - this is now done in the JS as well
+            br { display:none; }
+
+            div {
+                display:inline-block;
+                @include roundedEdges(14px);
+                padding:0 10px;
+                background-color:$beige;
+
+                &:not(:first-of-type) {
+                    margin-left:5px;
+                }
+            }
         }
 
 
     }
-}
+
+    //Options
+    &__optionset {
+        @include innerBox();
+        overflow:hidden;
+        height:38px;
+        margin-top:10px;
+        margin-bottom:10px;
+        display:block;
+        @include opacity(1);
+
+        //Alpha delayed
+        @include transition(margin 0.3s ease-out, height 0.3s ease-out, opacity 0.5s ease-in-out 0.2s);
 
 
-/*----------------------------------------------
-- SEARCH FORM
----------------------------------------------*/
+        //Hidden
+        &--hidden {
+            @include opacity(0);
+            height:0px;
+            margin-top:0;
+            margin-bottom:0;
 
-.search-form-holder {
-    text-align:center;
-    margin:0 auto;
-}
-
-//Hide the old one for now
-#search-form {
-    display:none;
-}
-
-
-//Rows on form
-.search-form__row {
-    display:block;
-    width:100%;
-    margin-bottom:10px;
-    border-top:1px solid rgba(255, 255, 255, 0.24);
-    padding:0 $paddingGeneral;
-
-    //Title
-    &__title {
-        text-align:left;
-        padding-bottom:16px;
-        font-size:20px;
-        font-weight: bold;
+            //Height delayed
+            @include transition(margin 0.3s ease-in-out 0.2s, height 0.3s ease-in-out 0.2s, opacity 0.3s ease-in-out 0s);
+        }
     }
 
+    &__option {
+        @include fontFace('medium');
+        @include roundedEdges(14px);
+        @include innerBox();
+        @include transition(background-color 0.4s ease-in-out);
+        background-color:none;
+        padding:4px 12px;
+        display:inline-block;
+        height:28px;
+        overflow:hidden;
+        cursor:pointer;
 
-    //Inner Box
-    @include innerBox();
-
-    &--main {
-        padding-top:$paddingGeneral;
-        min-height:120px;
-        background-color:#00b1bf;
+        //Selected
+        &--selected, &:hover {
+            background-color:$beige;
+        }
     }
 
-    &--secondary {
-        padding-top:$paddingGeneral;
-        min-height:160px;
-        background-color:$green;
+    &__option-spacer {
+        @include innerBox();
+        display:inline-block;
+        height:28px;
+        padding:4px 3px;
+        vertical-align: top;
     }
 
-    &--keywords {
-        min-height:90px;
-        background-color:#944393;
-        text-align:left;
-        display:table;
-    }
-
-    &--footer {
-        padding:0;
-        border-top:0px;
-        text-align: left;
+    &__button {
+        margin-top:26px;
     }
 }
 
 
 /*----------------------------------------------
-- MAIN SEARCH FORM BLOCK (HASHTAG, MENTIONS)
+- REMOVE DEFAULT STYLING
 ---------------------------------------------*/
-.search-form-main__row {
-    display:table;
-    width:100%;
-    margin: 0 auto;
-
-    &--mentions {
-        padding-top:13px;
-        text-align:left;
-        margin:0 auto 0 0;
-    }
-}
-
-.search-form-main__item {
-    display:inline-block;
-    position:relative;
-    margin:0;
-
-    &--left {
-        //margin-right:10px;
-    }
-
-    &--right {
-        margin-left:10px;
-    }
-}
-
-
-/*----------------------------------------------
-- INPUT FIELDS ACROSS WHOLE SITE
----------------------------------------------*/
-/*
-input {
-    //Inner Box
-    @include innerBox();
-    display:inline-block;
-    padding:0;
-    font-size:14px;
-    color:#666;
+input[type=submit] {
     border:0;
-    -webkit-appearance:none;
-    outline: none;
+    outline: 0;
+    width:150px;
+    min-width:150px;
+    padding-top:7px;
+    padding-left:32px;
 
-
-    //Input fields
-    &.input-text {
-        left:50px;
-        width:  318px;
-        height:50px;
-        padding:0 17px;
-
-        &.fluid-width {
-            width:100%;
-        }
-
-        &.small-text {
-            font-size:14px;
-        }
-
-        //Text
-        &.input-text--blue-border {
-            border:1px solid $blueAlt;
-        }
-
-        &.input-text--green-border {
-            border:1px solid #59a170;
-        }
-
-    }
-
-    //Buttons
-    &.button {
-        color:#fff;
-        padding-top:0px !important; //remove the padding that gets added by button classes
-    }
-}*/
-
-/*----------------------------------------------
-- CUSTOM RADIO
----------------------------------------------*/
-//Hide custom interface bits
-input[type=radio   ]:not(old){
-
-  width   : $radioSize;
-  margin  : 0;
-  padding : 0;
-  opacity : 0;
-
+    //Remove the browser styling
+    @include browserStyling(none);
 }
-
-
-input[type=radio   ]:not(old) + label{
-  display      : inline-block;
-  margin-left  : -$radioSize + 2px; //gap before
-  margin-right : 20px; //gap after
-  padding-left : $radioSize + 5px; //gap to label
-  background   : url('../images/radio-off.svg') no-repeat 0 0;
-  line-height  : $radioSize;
-}
-
-input[type=radio]:not(old):checked + label{
-  background-image : url('../images/radio-on.svg');
-}
-
-
-/*----------------------------------------------
-- INPUT FIELDS
----------------------------------------------*/
-.input-field {
-    display:inline-block;
-    //width:calc(100% - 50px);
-}
-
-.input-icon {
-    display:inline-block;
-    width:50px;
-    height:50px;
-    overflow:hidden;
-    background-color: $blueAlt;
-    left:0;
-    top:0;
-    font-size: 22px;
-    padding:10px 0 10px 1px;
-    padding-left:3px;
-    @include innerBox();
-    float:left;
-
-    //Green version
-    &--green {
-        background-color:#59a170;
-    }
-
-    //Hash padding
-    &.input-icon--padded-extra { padding: 12px 0 12px 2px; }
-}
-
-
-/*----------------------------------------------
-- KEYWORDS BITS
----------------------------------------------*/
-.search-keywords-wrapper {
-    display:table-cell;
-    vertical-align: middle;
-    font-size:14px;
-
-    .keywords-text-big {
-        font-weight:bold;
-        font-size:16px;
-    }
-
-    .keywords-stat-value {
-        font-weight:bold;
-        padding-left:11px;
-    }
-}
-
-
-/*----------------------------------------------
-- KEYWORD VIEWER
----------------------------------------------*/
-.keyword-edit-box {
-    position:relative;
-    display:block;
-    @include innerBox();
-    border-top:1px solid rgba(255, 255, 255, 0.24);
-    max-width:1080px;
-    max-height:650px;
-    width:80%;
-    height:80%;
-    background-color:#9f489e;
-    padding:$paddingGeneral;
-    pointer-events:all;
-    padding-left:$paddingLightBoxKeywordsLeft;
-    padding-right:$paddingLightBoxKeywordsRight;
-    overflow:hidden;
-
-    //Center me
-    margin:0 auto;
-
-    //Title
-    .keyword-edit-title {
-        margin-bottom:30px;
-        font-size:25px;
-    }
-
-    //Body
-    .keyword-edit-body {
-        font-size:13px;
-        line-height:20px;
-        margin-bottom:38px;
-        width:800px;
-    }
-}
-
-.keyword-list-item {
-    width:98%; //extra 2% left for scrollbar, else it looks rubbish
-    display:table;
-    opacity:1;
-    position:absolute;
-    top:0;
-    left:0;
-    @include transition(top 0.5s ease-in-out);
-
-    &.hidden {
-        opacity:0;
-    }
-}
-
-//Heade
-.keyword-list-item-header {
-    margin-top:30px;
-    margin-bottom:5px;
-    width:100%;
-    display:table;
-    font-weight:800;
-    font-size:16px;
-}
-
-.keyword-list-column {
-    display:table-cell;
-
-    &.left {
-        padding-right:$paddingGeneral;
-        width:211px;
-    }
-
-    &.right { }
-}
-
-.keyword-list-items {
-    width:100%;
-    scroll:auto;
-    overflow-y:auto;
-    overflow-x:hidden;
-    pointer-events:all;
-    height:calc(100% - 250px);
-    position:relative;
-}
-

@@ -13,7 +13,7 @@
       //  REQUIRES
       //--------------------------------------------------------
       require_once('config.php');
-      require_once '_lib/dataExporter.php';
+      require_once '_lib/DataExporter.php';
 
       //Serious limits
       ini_set('memory_limit','256M');
@@ -23,9 +23,9 @@
       //--------------------------------------------------------
       //  EXPORT!!!
       //--------------------------------------------------------
-      if(isset($_REQUEST['cacheID'])) {
-        $_exporter = new dataExporter();
-        $_exporter -> exportData(checkCacheFolder() . $_REQUEST['cacheID'] . '.txt', '_exports/' . $_REQUEST['cacheID'] , array('xls', 'xlsx'));
+      if(isset($_REQUEST['cacheID']) && isset($_REQUEST['date'])) {
+        $_exporter = new DataExporter();
+        $_exporter -> exportData(CACHE_FOLDER . '/' . str_replace('-', '/', $_REQUEST['date']) . '/' . $_REQUEST['cacheID'] . '.txt', '_exports/' . $_REQUEST['cacheID'] , array('xls', 'xlsx'));
 
         //Now just ping back the file
         $_filename = '_exports/' . $_REQUEST['cacheID'] . '.xlsx';
@@ -45,7 +45,4 @@
         header('Content-Length: ' . strlen($_contents));
         echo($_contents);
       }
-
-
-
 ?>
