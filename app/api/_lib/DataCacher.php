@@ -19,6 +19,7 @@
         private $fileExtension; //file extensions
         private $fileID; //id for the file
         private $data; //array of objects
+        private $idList; //list of IDs
 
         /*--------------------------------------------------
         - CONSTRUCTOR
@@ -45,6 +46,20 @@
                 //Read in the current data
                 $this -> data = json_decode(file_get_contents($this -> fileID), true);
             }
+
+            //Make a list of IDs for comparison to stop dupes
+            $this -> idList = array();
+            for($i = 0; $i < count($this -> data); $i++) {
+                $this -> idList[$this -> data[$i]['id']] = 1;
+            }
+        }
+
+
+        /*--------------------------------------------------
+        - EXISTS
+        --------------------------------------------------*/
+        public function exists($_id) {
+            return isset($this -> idList[$_id]);
         }
 
 
@@ -52,8 +67,8 @@
         - ADD
         --------------------------------------------------*/
         public function add($_data) {
-            //Check for dupes by using the value of '$_data['id']'
-
+            //Add to the list so we don't get dupes
+            $this -> idList[$_data['id']] = 1;
 
             //Truncated object so we aren't saving everything
             $_itemData = array(

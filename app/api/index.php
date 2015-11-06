@@ -125,17 +125,36 @@
     //Store a total count
     $_dataResponse['processedCount'] = count($_dataResponse['data-pre-filter']);
 
+    //Store the oldest post date, so we can feedback to the user how far we have snooped back
+    $_dataResponse['dateOldest'] = '';
+
     //Loop through the data that we found
     for($i=0;$i<count($_dataResponse['data-pre-filter']);$i++) {
 
-        //Precheck flag
+        ///--------------------------------------------------------
+        //  VARS
+        //---------------------------------------------------------
         $_preCheckPassed = true;
 
-        //New variables
+
+        ///--------------------------------------------------------
+        //  IS THIS THE OLDEST DATE
+        //---------------------------------------------------------
+        if($_dataResponse['dateOldest'] === '' || intval($_dataResponse['data-pre-filter'][$i]['created_time']) < $_dataResponse['dateOldest']) {
+            $_dataResponse['dateOldest'] = intval($_dataResponse['data-pre-filter'][$i]['created_time']);
+        }
+
+
+        ///--------------------------------------------------------
+        //  MATCH VARIABLES FOR ANY SEARCHES
+        //---------------------------------------------------------
         $_dataResponse['data-pre-filter'][$i]['matchList'] = array();
         $_dataResponse['data-pre-filter'][$i]['matches'] = array();
 
-        //Hack the images
+
+        ///--------------------------------------------------------
+        //  HACK THE IMAGES TO FIT NICELY
+        //---------------------------------------------------------
         $_dataResponse['data-pre-filter'][$i]['images']['standard_resolution']['url'] = str_replace('s150x150', 's640x640', $_dataResponse['data-pre-filter'][$i]['images']['thumbnail']['url']);
         $_dataResponse['data-pre-filter'][$i]['images']['low_resolution']['url'] = str_replace('s150x150', 's332x332', $_dataResponse['data-pre-filter'][$i]['images']['thumbnail']['url']);
 
@@ -177,8 +196,8 @@
                 checkFilters($i, '#', explode(',' , $postVars['tags']));
             }
 
-            //Only add to cached list if we found some kind of a match
-            if(count($_dataResponse['data-pre-filter'][$i]['matchList']) > 0 || $_filter === false) {
+            //Only add to list if we found some kind of a match and not already in the list
+            if((count($_dataResponse['data-pre-filter'][$i]['matchList']) > 0 || $_filter === false) && !$_cacheController -> exists($_dataResponse['data-pre-filter'][$i]['id'])) {
                 //Add to cache
                 $_cacheController -> add($_dataResponse['data-pre-filter'][$i]);
 
@@ -380,7 +399,7 @@
                 $_dataResponse['error'] = $_response['meta'];
 
                 //Blank the array (so we return no data)
-                 $_response = array();
+                $_response = array();
             } else {
                 //Pagination
                 if(isset($_response['pagination']) && $_checkForPagination === true) {

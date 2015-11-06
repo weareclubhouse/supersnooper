@@ -171,6 +171,8 @@ SuperSnooper.Modules.ItemManager.prototype.getItemHTML = function(_id, _info) {
         //'title':_date.getDate() + '.' + _date.getMonth() + '.' + _date.getFullYear() + '-' + _date.getHours() + ':' + _date.getMinutes() + ':' + _date.getSeconds(),
         'likes':SuperSnooper.helper.padString(_info.likes.count, '0', 2, true),
         'comments':SuperSnooper.helper.padString(_info.comments.count, '0', 2, true),
+        'likes-count':_info.likes.count,
+        'comments-count':_info.comments.count,
         'image':_info.images.low_resolution.url,
         'date':_info.created_time,
         'extra-classes':(_info.keywordMatches.words.length !== 0) ? 'result-item--keyword-match' : '',
@@ -202,22 +204,25 @@ SuperSnooper.Modules.ItemManager.prototype.createIsotopeGroup = function(_id) {
             gutter: 0
         },
 
-       hiddenStyle: {
-            opacity: 0
-        },
-        visibleStyle: {
-            opacity: 1
-        }
+        hiddenStyle: { opacity: 0 },
+        visibleStyle: { opacity: 1 },
+
+        //TRANSITION speed)
+        transitionDuration: '1s',
 
         //SORTING
-        /*
-        sortBy:'date',
+        sortBy:['comments', 'date'],
         sortAscending: false,
-         getSortData : {
-          // ...
+        getSortData : {
           date : function ( _elem ) {
             return parseInt($(_elem).attr('data-date'));
+          },
+          likes : function ( _elem ) {
+            return parseInt($(_elem).attr('data-likes'));
+          },
+          comments : function ( _elem ) {
+            return parseInt($(_elem).attr('data-comments'));
           }
-        }*/
+        }
     });
 };

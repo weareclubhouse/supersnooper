@@ -33,7 +33,6 @@ SuperSnooper.Modules.InfoBar = function(_itemManager) {
         matched:0
     };
 
-
     //Dates
     this.dateOldest = new Date();
     this.dateOldestTime = -1;
@@ -55,6 +54,7 @@ SuperSnooper.Modules.InfoBar = function(_itemManager) {
     this.bar = $('.searchbar'); //formerly header__search
     this.infoButton = $('#searchbar-button-info');
     this.exportButton = $('#searchbar-button-export');
+    this.loader = $('.wrapper .loader');
 
     //Listen for API signals
     SuperSnooper.Signals.api.add(function(_method, _vars) { this.apiEvent(_method, _vars); }.bind(this));
@@ -126,6 +126,13 @@ SuperSnooper.Modules.InfoBar.prototype.setState = function(_state) {
         this.exportButton.removeClass('button--inactive');
     }
 
+    //Loader
+    if(_state === 'pause' || _state === 'stop') {
+        this.loader.addClass('hidden');
+    } else {
+        this.loader.removeClass('hidden');
+    }
+
     //Store the state
     this.state = _state;
 };
@@ -138,8 +145,6 @@ SuperSnooper.Modules.InfoBar.prototype.apiEvent = function(_method, _vars) {
     if(_method === 'search-init') {
         //SEARCH init - completely new
         this.init();
-    } else if(_method === 'search-start') {
-        //THIS IS CALLED EVERYTIME A NEW PAGE OF DATA IS FETCHED - don't really need to do anything?
     } else if(_method === 'items-add') {
         //NEW ITEMS
 
@@ -178,18 +183,11 @@ SuperSnooper.Modules.InfoBar.prototype.update = function(_vars) {
     this.counts.total += _vars.itemCountTotal;
     this.counts.snooped += _vars.itemCountProcessed;
 
-    //Oldest date update
-    var _stamp;
-    for(var i=0;i<_vars.items.length;i++) {
-        //Timestamp for item
-        _stamp = parseInt(_vars.items[i].created_time * 1000);
-
-        //Older than previous oldest date?
-        if(_stamp < this.dateOldestTime || this.dateOldestTime === -1) {
-            //Older date!
-            this.dateOldestTime = _stamp;
-            this.dateOldest = new Date(_stamp);
-        }
+    //Check if the oldest date needs to change
+    var _stamp = parseInt(_vars.oldestDate * 1000);
+    if(_stamp < this.dateOldestTime || this.dateOldestTime === -1) {
+        this.dateOldestTime = _stamp;
+        this.dateOldest = new Date(_stamp);
     }
 
     //Set the text
@@ -207,7 +205,8 @@ SuperSnooper.Modules.InfoBar.prototype.setText = function() {
     if(this.state !== 'init') {
         var _date = SuperSnooper.helper.padString(this.dateOldest.getUTCDate()) + '-' + SuperSnooper.helper.padString(this.dateOldest.getUTCMonth() + 1) + '-' + (this.dateOldest.getYear() - 100);
         var _prefix = (this.state === 'stop') ? 'We‘ve ' : 'So far, we‘ve ';
-        _info = '<span class="bold">' + this.counts.total.toLocaleString() + '</span> images exist.<br/>' + _prefix + ' snooped through <span class="bold">' + this.counts.snooped.toLocaleString() + '</span> dating back to <span class="bold">' + _date + '</span>';
+        var _imageString = (this.counts.total !== 1) ? 'images exist' : 'image exists';
+        _info = '<span class="bold">' + this.counts.total.toLocaleString() + '</span> ' + _imageString + '.<br/>' + _prefix + ' snooped through <span class="bold">' + this.counts.snooped.toLocaleString() + '</span> dating back to <span class="bold">' + _date + '</span>';
     }
     $('.searchbar__info').html(_info);
 

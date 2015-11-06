@@ -21,7 +21,7 @@
     position:relative;
     width:100%;
     display:inline-block;
-    margin:0 0 3px 0;
+    margin:0 0 3px 0; //bottom margin only
     overflow:hidden;
 
     //@include hardwareAccelerate();
@@ -202,15 +202,6 @@
         }
     }
 
-    //Sizing
-
-    //Change columns
-    //@media (min-width: 480px) { width:calc(100% / 2); } //2 columns
-    //@media (min-width: 770px) { width:calc(100% / 3); } //3 columns
-    //@media (min-width: 1110px) { width:calc(100% / 4); } //4 columns
-    //@media (min-width: 1440px) { width:calc(100% / 5); } //5 columns
-    //@media (min-width: 1768px) { width:calc(100% / 6); } //6 columns
-    //@media (min-width: 2100px) { width:calc(100% / 7); } //6 columns
 
 
     //2 COLUMNS
@@ -223,57 +214,57 @@
             margin-right:$resultItemMargin;
         }
 
-        @media (max-width: 769px) {
+        /*@media (max-width: 769px) {
             &:nth-of-type(2n + 1) { .result-item { margin-left:0 !important; } }
             &:nth-of-type(2n) { .result-item { margin-right:0 !important; } }
-        }
+        }*/
     }
 
     //3 COLUMNS
     @media (min-width: 770px) {
         width:calc(100% / 3);
 
-        @media (max-width: 1109px) {
+        /*@media (max-width: 1109px) {
             &:nth-of-type(3n + 1) { .result-item { margin-left:0 !important; } }
             &:nth-of-type(3n) { .result-item { margin-right:0 !important; } }
-        }
+        }*/
     }
 
     //4 COLUMNS
     @media (min-width: 1110px) {
         width:calc(100% / 4);
 
-        @media (max-width: 1439px) {
+        /*@media (max-width: 1439px) {
             &:nth-of-type(4n + 1) { .result-item { margin-left:0 !important; } }
             &:nth-of-type(4n) { .result-item { margin-right:0 !important; } }
-        }
+        }*/
     }
 
     //5 COLUMNS
     @media (min-width: 1440px) {
         width:calc(100% / 5);
-        @media (max-width: 1767px) {
+       /* @media (max-width: 1767px) {
             &:nth-of-type(5n + 1) { .result-item { margin-left:0 !important; } }
             &:nth-of-type(5n) { .result-item { margin-right:0 !important; } }
-        }
+        }*/
     }
 
     //6 COLUMNS
     @media (min-width: 1768px) {
         width:calc(100% / 6);
 
-        @media (max-width: 2099px) {
+        /*@media (max-width: 2099px) {
             &:nth-of-type(6n + 1) { .result-item { margin-left:0 !important; } }
             &:nth-of-type(6n) { .result-item { margin-right:0 !important; } }
-        }
+        }*/
     }
 
     //7 COLUMNS
     @media (min-width: 2100px) {
         width:calc(100% / 7);
 
-        &:nth-of-type(7n + 1) { .result-item { margin-left:0 !important; } }
-        &:nth-of-type(7n) { .result-item { margin-right:0 !important; } }
+        /*&:nth-of-type(7n + 1) { .result-item { margin-left:0 !important; } }
+        &:nth-of-type(7n) { .result-item { margin-right:0 !important; } }*/
     }
 
     //OTHERS?

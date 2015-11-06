@@ -56,6 +56,7 @@ SuperSnooper.Site = function() {
     //UI
     this.viewer = new SuperSnooper.Modules.ItemViewer();
     this.itemManager = new SuperSnooper.Modules.ItemManager();
+    this.filters = new SuperSnooper.Modules.FilterManager();
     this.bar = new SuperSnooper.Modules.InfoBar(this.itemManager);
     this.lightbox = new SuperSnooper.Modules.LightBox();
 

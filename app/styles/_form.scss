@@ -15,7 +15,7 @@
         vertical-align: top;
 
         //Space between items
-        //padding-right:50px;
+        padding-right:50px;
         white-space: nowrap;
         overflow:hidden;
 
@@ -56,15 +56,18 @@
             white-space: nowrap;
             overflow:hidden;
             text-overflow: ellipsis;
-            padding-left:10px;
-            padding-right:50px;
+
+            //Margin
+            margin-left:10px;
+            //padding-right:50px;
 
             font-size:14px;
             text-transform: uppercase;
             width:auto;
             min-width:10px;
-            @include transition(min-width 1s ease-in-out);
-            max-width:calc(100% - 43px); //30px for the icon and then 10px for the margin
+            @include innerBox();
+            //@include transition(min-width 0.5s ease-out 0s); - handled in the JS with TweenMax, due to issues
+            max-width:calc(100% - 33px); //
             display:inline-block;
             outline:0;
             position:relative;
@@ -85,16 +88,7 @@
             //Hide line breaks - this is now done in the JS as well
             br { display:none; }
 
-            div {
-                display:inline-block;
-                @include roundedEdges(14px);
-                padding:0 10px;
-                background-color:$beige;
 
-                &:not(:first-of-type) {
-                    margin-left:5px;
-                }
-            }
         }
 
 

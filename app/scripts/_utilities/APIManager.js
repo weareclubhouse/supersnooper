@@ -35,16 +35,13 @@ SuperSnooper.Utilities.APIManager = function(_url) {
     this.pageDelayTime = 300;
 
     //Queries (list of queries we are looping through, usually 1, but maybe more if this is a multiple hashtag search)
-    this.queries = [];
+    this.queryList = [];
+    this.queryCurrent = 0;
 
     //Items returned so far
     this.items = [];
 
-    //Search terms
-    this.searchTerms = {};
-
     //Flags
-    this.hasMoreData = false;
     this.postInProgress = false;
     this.isPaused = false;
 };
@@ -63,9 +60,6 @@ SuperSnooper.Utilities.APIManager.prototype.initSearch = function(_terms) {
     //Store the search terms for reference when displaying the items
     SuperSnooper.helper.searchProcess(_terms);
 
-    //Store the search criteria
-    this.searchTerms = _terms;
-
     //Kill any old post
     if(this.postInProgress === true && this.postLast) {
         this.postLast.abort();
@@ -74,18 +68,39 @@ SuperSnooper.Utilities.APIManager.prototype.initSearch = function(_terms) {
     //Empty the items array
     this.items = [];
 
-    //Setup our queries...
+    //Setup our queries (this allows for multi-threaded queries)
+    this.queryList = [];
+    this.queryCurrent = 0;
+
+    //Under
+    if(_terms.tags !== '' && _terms['tags-method'] === 'any' && (_terms.names === '' || _terms['names-method'] === 'mentions')) {
+        //Multi-threaded search
+        var _tags = _terms.tags.split(',');
+        for(var i = 0; i < _tags.length; i++) {
+            this.queryList.push({searchTerms:{
+                'names':_terms.names,
+                'tags':_tags[i],
+                'keywords':_terms.keywords,
+                'names-method':_terms['names-method'],
+                'tags-method':'any',
+                'date':_terms.data,
+                'searchID':_terms.searchID
+            }, complete:false});
+        }
+    } else {
+        //One thread search
+        this.queryList.push({searchTerms:_terms, complete:false});
+    }
 
     //Flags
     this.isPaused = false;
-    this.hasMoreData = true;
     this.postInProgress = false;
 
     //Event (picked up by Site.js)
     SuperSnooper.Signals.api.dispatch('search-init', {});
 
     //Get next data
-    this.getNextDataSet();
+    this.getNextDataSet(true);
 };
 
 
@@ -93,14 +108,20 @@ SuperSnooper.Utilities.APIManager.prototype.initSearch = function(_terms) {
 //--------------------------------------------------------------------------
 //  INIT SEARCH
 //--------------------------------------------------------------------------
-SuperSnooper.Utilities.APIManager.prototype.getNextDataSet = function() {
+SuperSnooper.Utilities.APIManager.prototype.getNextDataSet = function(_firstRun) {
+    //Flags
+    _firstRun = (_firstRun === undefined) ? false : _firstRun;
+
+    //If this is not the first run, then we should switch to the next available query thread
+    if(!_firstRun) { this.queryCurrent = this.getNextIncompleteThread(); }
+
     //POST the current data
-    this.postLast = $.post( this.url, this.searchTerms, function(_data ) {
+    this.postLast = $.post( this.url, this.queryList[this.queryCurrent].searchTerms, function(_data ) {
         this.dataLoaded(_data);
     }.bind(this));
 
-    //Event
-    SuperSnooper.Signals.api.dispatch('search-start', this.searchTerms);
+    //Dispatch an event
+    //SuperSnooper.Signals.api.dispatch('search-start', this.queryList[this.queryCurrent].searchTerms);
 
     //Flag
     this.postInProgress = true;
@@ -114,33 +135,34 @@ SuperSnooper.Utilities.APIManager.prototype.dataLoaded = function(_data) {
     //Flag off
     this.postInProgress = false;
 
-    //Loop through the items
+    //Loop through the items and check them against the keywords
     for(var i=0; i < _data.data.length; i++) {
         //Keyword matching for this item
-        _data.data[i].keywordMatches = this.keywordMatch(_data.data[i], this.searchTerms.keywords);
+        _data.data[i].keywordMatches = this.keywordMatch(_data.data[i], this.queryList[this.queryCurrent].searchTerms.keywords);
     }
 
     //Push ALL of the data into the main stack (needed for looping back through later on maybe)
     this.items = this.items.concat(_data.data);
 
     //If this is a 'user' search we can reduce the query time by injecting the user id in as well now that we know what it is
-    if(_data.userID !== undefined) { this.searchTerms.userID = _data.userID; }
+    if(_data.userID !== undefined) { this.queryList[this.queryCurrent].searchTerms.userID = _data.userID; }
 
     //Decide if there is more to show...
     if(_data.pagination && _data.pagination.next_max_id && (!SuperSnooper.helper.DEBUG_MODE || !SuperSnooper.helper.ONE_PAGE_ONLY)) {
-        //Flag
-        this.hasMoreData = true;
-
-        //Add the next item paramater in for searching again...
-        this.searchTerms.itemStartID = _data.pagination.next_max_id;
+        //Add the next item paramater in for searching again on this thread...
+        this.queryList[this.queryCurrent].searchTerms.itemStartID = _data.pagination.next_max_id;
     } else {
-        //No more data
-        this.hasMoreData = false;
-        this.setState('stop');
+        //No more data on this thread
+        this.queryList[this.queryCurrent].complete = true;
+
+        //If there are now no threads that are not 'complete', theh call the stop method
+        if(this.getNextIncompleteThread() === -1) {
+            this.setState('stop');
+        }
     }
 
-    //Get more data?!?!?
-    if(this.hasMoreData && !this.isPaused) {
+    //If we are !PAUSED and there is a next available thread, then call it after a slight delay
+    if(this.getNextIncompleteThread() !== -1 && !this.isPaused) {
         this.nextPageDelay = setTimeout(function() {
             this.getNextDataSet();
         }.bind(this), this.pageDelayTime);
@@ -155,27 +177,52 @@ SuperSnooper.Utilities.APIManager.prototype.dataLoaded = function(_data) {
         itemCountProcessed:parseInt(_data.processedCount), //how many items were found (ignoring any filters that were applied)
         itemCountTotal:(_data.itemCount !== undefined) ? parseInt(_data.itemCount) : 0, //if this was the first call there will be an 'overall' item count
 
-        //searchTerms:this.searchTerms, //repeat of the search terms???? - not used
+        //Oldest date on the posts
+        oldestDate:parseInt(_data.dateOldest)
     });
 };
 
+
+//--------------------------------------------------------------------------
+//  GET THE NEXT INCOMPLETE THREAD
+//--------------------------------------------------------------------------
+SuperSnooper.Utilities.APIManager.prototype.getNextIncompleteThread = function() {
+    //Vars
+    var _threadID = -1;
+    var i;
+
+    //Loop through the available threads 'after' the current one
+    for( i = this.queryCurrent + 1; i < this.queryList.length; i++) {
+        if(!this.queryList[i].complete) {
+           _threadID = i;
+           break;
+        }
+    }
+
+    //If we didn't find anything, then loop back round and check
+    if(_threadID === -1) {
+        for( i = 0; i <= this.queryCurrent; i++) {
+            if(!this.queryList[i].complete) {
+               _threadID = i;
+               break;
+            }
+        }
+    }
+
+    //Return
+    return _threadID;
+};
 
 
 //--------------------------------------------------------------------------
 //  API EVENT
 //--------------------------------------------------------------------------
 SuperSnooper.Utilities.APIManager.prototype.apiEvent = function(_method) {
-    if(_method === 'load-more') {
-        //LOAD MORE items
-        if(this.hasMoreData && !this.postInProgress) {
-            this.getNextDataSet();
-        }
-    } else if(_method === 'state-toggle') {
-        //TOGGLE my status
-        if(this.hasMoreData) {
+    if(_method === 'state-toggle') {
+        //TOGGLE my status - called by the PAUSE/RESUME button in InfoBar.js
+        if(this.getNextIncompleteThread() !== -1) {
             this.setState((!this.isPaused) ? 'pause' : 'go');
         }
-    } else if(_method === 'resume') {
     }
 };
 
@@ -194,7 +241,9 @@ SuperSnooper.Utilities.APIManager.prototype.setState = function(_state) {
     } else if(_state === 'go') {
         //TURN off pause flag
         this.isPaused = false;
-        if(!this.postInProgress && this.hasMoreData) {
+
+        //Get the next set of data if not already doing so
+        if(!this.postInProgress && this.getNextIncompleteThread() !== -1) {
             this.getNextDataSet();
         }
     } else if(_state === 'stop') {

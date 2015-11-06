@@ -1,7 +1,7 @@
 <!--Template 'ITEM RESULTS'-->
 <script id="item-template" type="text/x-handlebars-template">
-    <a href="#" data-id="" class='result-item-wrapper' id="item{{id}}">
-        <div class="result-item {{extra-classes}}" data-date="{{date}}"  style="background-image:url({{image}});">
+    <a href="#" data-id="" data-date="{{date}}"  data-likes="{{likes-count}}" data-comments="{{comments-count}}" class='result-item-wrapper' id="item{{id}}">
+        <div class="result-item {{extra-classes}}" style="background-image:url({{image}});">
             <div class="result-item__cover"><div class="result-item__cover__icon"><span class="icon icon--plus"></span></div></div>
             <div class="result-item__header"><div class="result-item__header__title">{{title}}</div></div>
             <div class="result-item__footer">

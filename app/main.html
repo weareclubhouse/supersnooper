@@ -115,9 +115,42 @@
                     </div>
                 </form>
             </div>
-            <!--include "content-filters.html"-->
+            <div class="content-column">
+                <div class="table" style="width:100%;">
+                    <div class="table-cell table-cell--vt" style="text-align:left;">
+                        <div class="filters" id="filters-tags">
+                            <span class="filters__title">SHOWING</span>
+                            <ul>
+                                <li class="filters__option">#tag1</li>
+                                <li class="filters__option">#tag2</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="table-cell table-cell--vt" style="text-align:right;">
+                        <div class="filters" id="filters-sort">
+                            <span class="filters__title">SORT BY</span>
+                            <ul>
+                                <li class="filters__option filters__option--selected">Date</li>
+                                <li class="filters__option">Keywords Only</li>
+                                <li class="filters__option">Likes</li>
+                                <li class="filters__option">Comments</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!--Results-->
-            <div class="result-list content-column"></div>
+            <div class="result-list content-column content-column--results"></div>
+            <!--Loader-->
+            <div class="content-column">
+                <div class="loader hidden">
+                    <div class="loader-circles">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -182,14 +215,15 @@
     <script src="scripts/_modules/InfoBar.js"></script>
     <script src="scripts/_modules/ItemManager.js"></script>
     <script src="scripts/_modules/ItemViewer.js"></script>
+    <script src="scripts/_modules/FilterManager.js"></script>
     <script src="scripts/_modules/Lightbox.js"></script>
     <script src="scripts/_modules/SnooperEyes.js"></script>
 
     <!-- endbuild -->
     <!--Template 'ITEM RESULTS'-->
     <script id="item-template" type="text/x-handlebars-template">
-        <a href="#" data-id="" class='result-item-wrapper' id="item{{id}}">
-            <div class="result-item {{extra-classes}}" data-date="{{date}}"  style="background-image:url({{image}});">
+        <a href="#" data-id="" data-date="{{date}}"  data-likes="{{likes-count}}" data-comments="{{comments-count}}" class='result-item-wrapper' id="item{{id}}">
+            <div class="result-item {{extra-classes}}" style="background-image:url({{image}});">
                 <div class="result-item__cover"><div class="result-item__cover__icon"><span class="icon icon--plus"></span></div></div>
                 <div class="result-item__header"><div class="result-item__header__title">{{title}}</div></div>
                 <div class="result-item__footer">

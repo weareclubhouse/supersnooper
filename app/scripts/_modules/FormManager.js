@@ -49,8 +49,9 @@ SuperSnooper.Modules.FormManager = function() {
     if(SuperSnooper.helper.DEBUG_MODE) {
         $('#search-names').text('gregfindon');
         $('#search-tags').text('');
-        $('#search-keywords').text('');
+        //$('#search-keywords').text('');
         //this.inputOptionSelect('options-names', 1, 'mentions');
+        //this.inputOptionSelect('options-tags', 1, 'any');
         this.searchInit();
     }
 
@@ -158,15 +159,16 @@ SuperSnooper.Modules.FormManager.prototype.inputInit = function() {
 
 
         //On Blur / Focus events
-        _item.on('blur', function(_itemBlur) { this.inputItemFocus(_itemBlur, false); }.bind(this, _item));
-        _item.on('focus', function(_itemFocus) { this.inputItemFocus(_itemFocus, true); }.bind(this, _item));
+        _item.on('blur', function(_itemBlur, _event) { this.inputItemFocus(_itemBlur, false); _event.stopPropagation(); _event.preventDefault(); }.bind(this, _item));
+        _item.on('focus', function(_itemFocus, _event) { this.inputItemFocus(_itemFocus, true); _event.stopPropagation(); _event.preventDefault(); }.bind(this, _item));
         //_item.on('click', function(_itemFocus) { this.inputItemFocus(_itemFocus, true); }.bind(this, _item));
     }
 
     //Document event to kill the options if the user is clicking outside - not really required now
     $(window).on('click', function(_event) {
-        if(!$(_event.target).hasClass('search-form__option') && !$(_event.target).hasClass('search-form__column__input')) {
-            this.manageOptions(''); //close options
+        //if(!$(_event.target).hasClass('search-form__option') && !$(_event.target).hasClass('search-form__column__input')) {
+        if($(_event.target).is('body') || $(_event.target).is('header')) {
+            this.manageOptions('', 'close'); //close options
         }
     }.bind(this));
 };
@@ -176,6 +178,10 @@ SuperSnooper.Modules.FormManager.prototype.inputInit = function() {
 //  KEY DOWN
 //--------------------------------------------------------------------------
 SuperSnooper.Modules.FormManager.prototype.inputKeyDown = function(_item, _event) {
+    //Split
+    var _words;
+    var _value = _item.text();
+
     //Only allow certain keys through
     if(this.allowedKeys.indexOf(_event.keyCode) === -1) {
         console.log('BLOCKED KEY:' + _event.keyCode);
@@ -183,10 +189,22 @@ SuperSnooper.Modules.FormManager.prototype.inputKeyDown = function(_item, _event
     } else if(_event.keyCode === 13) {
         //ENTER - prevent anything happening here
         _event.preventDefault();
-    } else if(_event.keyCode === 188 && _item.attr('id') === 'search-tags') {
-        //TAGS, only allow a certain amount of comma inputs
-        var _tags = _item.text().split(',');
-        if(_tags.length >=  this.tagMax) {
+    } else if(_item.attr('id') === 'search-tags') {
+        //TAGS
+        if(event.keyCode === 188) {
+            //Only allow a certain amount of commas
+            _words = _value.split(',');
+            if(_words.length >=  this.tagMax) {
+                _event.preventDefault();
+            }
+        } else if(event.keyCode === 32) {
+            if(_value.length === 0 || _value.substr(_value.length - 1, 1) !== ',') {
+                _event.preventDefault();
+            }
+        }
+    } else if(_item.attr('id') === 'search-names') {
+        //NAMES - no spaces or commas
+        if(event.keyCode === 188 || _event.keyCode === 32) {
             _event.preventDefault();
         }
     }
@@ -223,7 +241,7 @@ SuperSnooper.Modules.FormManager.prototype.inputTextCheck = function(_item) {
     }
 
     //If this is the 'tags' then check if we should now show the options
-    this.manageOptions(_item.attr('id').substr(7));
+    this.manageOptions(_item.attr('id').substr(7), 'text-check');
 
 };
 
@@ -232,6 +250,8 @@ SuperSnooper.Modules.FormManager.prototype.inputTextCheck = function(_item) {
 //  FOCUS / BLUR OF INPUT
 //--------------------------------------------------------------------------
 SuperSnooper.Modules.FormManager.prototype.inputItemFocus = function(_item, _focus) {
+
+
     //Act
     if(!_focus) {
         //Scroll reset
@@ -246,22 +266,24 @@ SuperSnooper.Modules.FormManager.prototype.inputItemFocus = function(_item, _foc
             //Make sure there is no default class on
             _item.removeClass('search-form__column__input--default');
         }
+
     } else {
         //FOCUS
-        if(_item.html() === _item.attr('data-default')) {
-            //Text is the default, so blank it after a little delay
-            setTimeout(function() {
-                _item.html('');
-                //document.execCommand('selectAll', false, null);
-            }, 10);
-        }
+
 
         //Remove the default class regardless
         _item.removeClass('search-form__column__input--default');
+
+        if(_item.html() === _item.attr('data-default')) {
+            //Text is the default, so blank it after a little delay to allow animation to happen
+            setTimeout(function() {
+                _item.html(''); // the delay stops double events
+                //document.execCommand('selectAll', false, null);
+            }, 10);
+        }
     }
 
-    //Manage options display - not required on focus
-    this.manageOptions(_item.attr('id').substr(7));
+    this.manageOptions(_item.attr('id').substr(7), 'focus-' + _focus);
 };
 
 
@@ -284,10 +306,11 @@ SuperSnooper.Modules.FormManager.prototype.isMultiTaggging = function(_str) {
 //--------------------------------------------------------------------------
 //  CHECK IF A GIVEN OPTION SO
 //--------------------------------------------------------------------------
-SuperSnooper.Modules.FormManager.prototype.manageOptions = function(_id) {
-    //NAMES options
-    var _namesValue = $('#search-names').text().trim().toLowerCase();
-    var _names = (_id === 'names' && _namesValue !== '' && _namesValue !== $('#search-names').attr('data-default').toLowerCase()) ? true : false;
+SuperSnooper.Modules.FormManager.prototype.manageOptions = function(_id, _method) {
+    console.log('OPTIONS MANAGEMENT:' + _id + ':' + _method);
+    //NAMES options - on by default if we are clicking the name field
+    //var _namesValue = $('#search-names').text().trim().toLowerCase();
+    var _names = (_id === 'names') ? true : false; //open regardless -  && _namesValue !== '' && _namesValue !== $('#search-names').attr('data-default').toLowerCase()
 
     //TAGS options
     var _tagsValue = $('#search-tags').text().trim().toLowerCase();
