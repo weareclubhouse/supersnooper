@@ -11,8 +11,7 @@
 // JS HINT BITS
 //--------------------------------------------------------------------------
 'use strict';
-/*global SuperSnooper,Isotope:true*/
-/*jshint camelcase: false */
+/*global SuperSnooper:true*/
 /*jshint loopfunc: true */
 
 //--------------------------------------------------------------------------
@@ -34,8 +33,27 @@ SuperSnooper.Modules.ItemManager = function() {
     //Listen for API signals
     SuperSnooper.Signals.api.add(function(_method, _vars) { this.apiEvent(_method, _vars); }.bind(this));
 
-    //Setup a temporary ISOTOPE object
+    //Listen for FILTER signals
+    SuperSnooper.Signals.filter.add(function(_method, _vars) { this.filterEvent(_method, _vars); }.bind(this));
+
+    //Isotopes
     this.isotopes = {};
+
+    //Default sort fields
+    this.sortFields = ['date'];
+
+
+    //Cluster.js test
+    /*
+    var _data = [];
+    for(var i = 0; i < 1000; i++) {
+        _data.push('<div class="result-item-wrapper" id="item{{id}}"><div class="result-item" style="color:#333333">' + i + '</div></div>');
+    }
+    this.dataCluster = new Clusterize({
+        //rows:_data,
+        scrollId: 'scrollArea',
+        contentId: 'contentArea'
+    });*/
 };
 
 //Definition
@@ -55,6 +73,17 @@ SuperSnooper.Modules.ItemManager.prototype.apiEvent = function(_method, _vars) {
     }
 };
 
+
+//--------------------------------------------------------------------------
+//  FILTER EVENT
+//--------------------------------------------------------------------------
+SuperSnooper.Modules.ItemManager.prototype.filterEvent = function(_method, _vars) {
+    if(_method === 'sort') {
+        this.isotopes.main.isotope({'sortBy':_vars});
+    }
+};
+
+
 //--------------------------------------------------------------------------
 //  START / RESET
 //--------------------------------------------------------------------------
@@ -68,6 +97,9 @@ SuperSnooper.Modules.ItemManager.prototype.reset = function() {
     //Clear the item list
     this.items = [];
     this.nextItem = -1;
+
+    //Sort method ID
+    this.sortFields = ['date'];
 
     //Isotope group
     if(SuperSnooper.helper.ISOTOPE_ENABLED) {
@@ -87,6 +119,9 @@ SuperSnooper.Modules.ItemManager.prototype.addGroup = function(_items) {
     for(var i=0;i<_items.length;i++) {
         //Add to the item list
         this.items.push({data:_items[i], item:null});
+
+        //Append
+        //this.dataCluster.append(['<div class="result-item-wrapper" id="item{{id}}"><div class="result-item" style="color:#333333">' + i + '</div></div>']);
     }
 
     //TEMPORARY quick open of one of the items
@@ -95,6 +130,9 @@ SuperSnooper.Modules.ItemManager.prototype.addGroup = function(_items) {
         SuperSnooper.Signals.viewer.dispatch('open', {id:_id, data:this.items[_id].data});
         this.opened = true;
     }*/
+
+
+
 
 
     //Is the interval running?
@@ -117,11 +155,14 @@ SuperSnooper.Modules.ItemManager.prototype.addNextItem = function() {
         //Is there a valid item?
         if(this.nextItem < this.items.length) {
             //Create the item
-            var _item = this.getItemHTML(this.nextItem, this.items[this.nextItem].data);
+            var _item = new SuperSnooper.Modules.Item(this.nextItem, this.items[this.nextItem].data);
 
             //Add to the HTML
             if(SuperSnooper.helper.ISOTOPE_ENABLED) {
-                this.isotopes.main.insert(_item);
+                //Add into our isotope code
+                this.isotopes.main.isotope('insert', _item.getHTML('inner'));
+                //this.dataCluster.append(['<div class="result-item-wrapper" id="item{{id}}"><div class="result-item" style="color:#333333">AN ITEM</div></div>']);
+                //this.dataCluster.refresh();
             } else {
                 $('.result-list').append(_item);
             }
@@ -134,55 +175,7 @@ SuperSnooper.Modules.ItemManager.prototype.addNextItem = function() {
         }
     }
 
-    //Links
-    this.setupResultItemLinks();
 
-
-};
-
-
-//--------------------------------------------------------------------------
-//  SETUP THE RESULT ITEM LINKS (THIS NEEDS TO BE MORE EFFECIENT)
-//--------------------------------------------------------------------------
-SuperSnooper.Modules.ItemManager.prototype.setupResultItemLinks = function() {
-    var _links = $('a.result-item-wrapper');
-    for(var i=0;i<_links.length;i++) {
-        //Remove old listeners
-        $(_links[i]).off('.items');
-        $(_links[i]).on('click.items', function(_id) {
-            //Dispatch an event
-            SuperSnooper.Signals.viewer.dispatch('open', {id:_id, data:this.items[_id].data});
-            return false;
-        }.bind(this, i));
-    }
-};
-
-
-
-
-
-//--------------------------------------------------------------------------
-// CREATE AN ITEM TEMPLATE FROM A GIVEN SET OF INFO (RESULTS ITEM)
-//--------------------------------------------------------------------------
-SuperSnooper.Modules.ItemManager.prototype.getItemHTML = function(_id, _info) {
-    //HTML
-    var _html = SuperSnooper.templates.item({
-        'title': '@' + _info.user.username,
-        //'title':_date.getDate() + '.' + _date.getMonth() + '.' + _date.getFullYear() + '-' + _date.getHours() + ':' + _date.getMinutes() + ':' + _date.getSeconds(),
-        'likes':SuperSnooper.helper.padString(_info.likes.count, '0', 2, true),
-        'comments':SuperSnooper.helper.padString(_info.comments.count, '0', 2, true),
-        'likes-count':_info.likes.count,
-        'comments-count':_info.comments.count,
-        'image':_info.images.low_resolution.url,
-        'date':_info.created_time,
-        'extra-classes':(_info.keywordMatches.words.length !== 0) ? 'result-item--keyword-match' : '',
-        'id':'item' + _id
-    });
-
-    //Click handler?
-
-    //Return cast object
-    return $(_html);
 };
 
 
@@ -194,7 +187,9 @@ SuperSnooper.Modules.ItemManager.prototype.createIsotopeGroup = function(_id) {
     $('.result-list').append(SuperSnooper.templates.itemlist({id:_id}));
 
     //Make the ISOTOPE object with the given ID (either DATE or DATE-SUBCLASS)
-    this.isotopes[_id] = new Isotope(document.querySelector('.result-list-items#' + _id), {
+    //this.isotopes[_id] = new Isotope(document.querySelector('.result-list-items#' + _id), {
+
+    this.isotopes[_id] = $('.result-list-items#' + _id).isotope({
         //LAYOUT
         masonry: {
             //isFitWidth: true
@@ -204,14 +199,15 @@ SuperSnooper.Modules.ItemManager.prototype.createIsotopeGroup = function(_id) {
             gutter: 0
         },
 
+        //SETTING THESE STOP ITEMS SCALING IN
         hiddenStyle: { opacity: 0 },
         visibleStyle: { opacity: 1 },
 
         //TRANSITION speed)
-        transitionDuration: '1s',
+        transitionDuration: '0.4s',
 
         //SORTING
-        sortBy:['comments', 'date'],
+        sortBy:this.sortFields,
         sortAscending: false,
         getSortData : {
           date : function ( _elem ) {
@@ -222,6 +218,9 @@ SuperSnooper.Modules.ItemManager.prototype.createIsotopeGroup = function(_id) {
           },
           comments : function ( _elem ) {
             return parseInt($(_elem).attr('data-comments'));
+          },
+          keywords : function ( _elem ) {
+            return parseInt($(_elem).attr('data-keywords'));
           }
         }
     });

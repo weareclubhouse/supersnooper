@@ -32,6 +32,7 @@ SuperSnooper.Modules.ItemViewer = function() {
 
     //Store the info for the item we are viewing
     this.info = {};
+
 };
 
 //Definition

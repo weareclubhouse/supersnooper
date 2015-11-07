@@ -1,7 +1,29 @@
 <!--Template 'ITEM RESULTS'-->
-<script id="item-template" type="text/x-handlebars-template">
-    <a href="#" data-id="" data-date="{{date}}"  data-likes="{{likes-count}}" data-comments="{{comments-count}}" class='result-item-wrapper' id="item{{id}}">
-        <div class="result-item {{extra-classes}}" style="background-image:url({{image}});">
+<script id="itemInner-template" type="text/x-handlebars-template">
+    <div class="result-item__cover"><div class="result-item__cover__icon"><span class="icon icon--plus"></span></div></div>
+    <div class="result-item__header"><div class="result-item__header__title">{{title}}</div></div>
+    <div class="result-item__footer">
+        <div class="table-cell">
+            <div class="table">
+                <div class="table-cell result-item__footer__icon result-item__footer__icon--likes"><span class="icon icon--likes"></span></div>
+                <div class="table-cell result-item__footer__value">{{likes}}</div>
+                <div class="table-cell result-item__footer__icon result-item__footer__icon--comments"><span class="icon icon--comments"></span></div>
+                <div class="table-cell result-item__footer__value">{{comments}}</div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="itemWrapper-template" type="text/x-handlebars-template">
+    <a href="#" data-id="" data-date="{{date}}" data-keywords="{{keywords-count}}" data-likes="{{likes-count}}" data-comments="{{comments-count}}" class='result-item-wrapper' id="item{{id}}">
+        <div class="result-item {{extra-classes}}" style="">
+        </div>
+    </a>
+</script>
+
+<script id="itemFull-template" type="text/x-handlebars-template">
+    <a href="#" data-id="" data-date="{{date}}" data-keywords="{{keywords-count}}" data-likes="{{likes-count}}" data-comments="{{comments-count}}" class='result-item-wrapper' id="item{{id}}">
+        <div class="result-item {{extra-classes}}" style="">
             <div class="result-item__cover"><div class="result-item__cover__icon"><span class="icon icon--plus"></span></div></div>
             <div class="result-item__header"><div class="result-item__header__title">{{title}}</div></div>
             <div class="result-item__footer">

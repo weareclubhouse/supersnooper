@@ -4,11 +4,12 @@
   "dependencies": {
     "jquery": "~1.11.1",
     "modernizr": "~2.8.2",
-    "isotope": "~2.1.1",
+    "isotope": "~2.2.2",
     "signals": "~1.0.0",
     "greensock": "~1.16.1",
     "handlebars": "~3.0.0",
     "normalize.css": "~3.0.2",
-    "Snap.svg": "snap.svg#~0.4.1"
+    "Snap.svg": "snap.svg#~0.4.1",
+    "clusterize": "NeXTs/Clusterize.js#~0.12.0"
   }
 }

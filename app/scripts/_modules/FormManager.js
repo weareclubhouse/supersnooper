@@ -47,11 +47,11 @@ SuperSnooper.Modules.FormManager = function() {
 
     //Dummy Search Trigger
     if(SuperSnooper.helper.DEBUG_MODE) {
-        $('#search-names').text('gregfindon');
-        $('#search-tags').text('');
-        //$('#search-keywords').text('');
+        $('#search-names').text('');
+        $('#search-tags').text('raspberrypi');
+        $('#search-keywords').text('');
         //this.inputOptionSelect('options-names', 1, 'mentions');
-        //this.inputOptionSelect('options-tags', 1, 'any');
+        this.inputOptionSelect('options-tags', 1, 'any');
         this.searchInit();
     }
 

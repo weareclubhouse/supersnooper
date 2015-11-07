@@ -32,9 +32,10 @@
         <!-- build:css(.) styles/vendor.css -->
         <!-- bower:css -->
         <link rel="stylesheet" href="bower_components/normalize.css/normalize.css" />
-
+        <link rel="stylesheet" href="bower_components/clusterize/clusterize.css" />
         <!-- endbower -->
         <!-- endbuild -->
+
         <!-- build:css(.tmp) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
@@ -116,30 +117,34 @@
                 </form>
             </div>
             <div class="content-column">
-                <div class="table" style="width:100%;">
+                <div class="table table--fullwidth filters-wrapper">
                     <div class="table-cell table-cell--vt" style="text-align:left;">
-                        <div class="filters" id="filters-tags">
+                        <div class="filters filters--hidden" id="filters-left">
                             <span class="filters__title">SHOWING</span>
-                            <ul>
-                                <li class="filters__option">#tag1</li>
-                                <li class="filters__option">#tag2</li>
-                            </ul>
+                            <ul></ul>
                         </div>
                     </div>
                     <div class="table-cell table-cell--vt" style="text-align:right;">
-                        <div class="filters" id="filters-sort">
+                        <div class="filters filters--hidden" id="filters-right">
                             <span class="filters__title">SORT BY</span>
                             <ul>
-                                <li class="filters__option filters__option--selected">Date</li>
-                                <li class="filters__option">Keywords Only</li>
-                                <li class="filters__option">Likes</li>
-                                <li class="filters__option">Comments</li>
+                                <!--<li class="filters__option filters__option--selected" data-id="date">Date</li>
+                                <li class="filters__option" data-id="keywords">Keywords Only</li>
+                                <li class="filters__option" data-id="likes">Likes</li>
+                                <li class="filters__option" data-id="comments">Comments</li>-->
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
-            <!--Results-->
+            <!--Results
+            <div id="scrollArea" class="clusterize-scroll content-column content-column--results">
+              <div id="contentArea" class="clusterize-content">
+                <div class="clusterize-no-data">Loading our clustered data…</div>
+              </div>
+            </div>-->
+
+
             <div class="result-list content-column content-column--results"></div>
             <!--Loader-->
             <div class="content-column">
@@ -178,31 +183,17 @@
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
-
-    <script src="bower_components/get-style-property/get-style-property.js"></script>
-    <script src="bower_components/get-size/get-size.js"></script>
-    <script src="bower_components/matches-selector/matches-selector.js"></script>
-    <script src="bower_components/eventie/eventie.js"></script>
-    <script src="bower_components/doc-ready/doc-ready.js"></script>
-    <script src="bower_components/eventEmitter/EventEmitter.js"></script>
-    <script src="bower_components/outlayer/item.js"></script>
-    <script src="bower_components/outlayer/outlayer.js"></script>
-    <script src="bower_components/masonry/masonry.js"></script>
-    <script src="bower_components/isotope/js/item.js"></script>
-    <script src="bower_components/isotope/js/layout-mode.js"></script>
-    <script src="bower_components/isotope/js/isotope.js"></script>
-    <script src="bower_components/isotope/js/layout-modes/vertical.js"></script>
-    <script src="bower_components/isotope/js/layout-modes/fit-rows.js"></script>
-    <script src="bower_components/isotope/js/layout-modes/masonry.js"></script>
     <script src="bower_components/signals/dist/signals.js"></script>
-
     <script src="bower_components/greensock/src/uncompressed/TweenMax.js"></script>
     <script src="bower_components/handlebars/handlebars.js"></script>
-
     <script src="bower_components/Snap.svg/dist/snap.svg.js"></script>
+    <script src="bower_components/clusterize/clusterize.js"></script>
+
 
     <!-- endbower -->
     <!-- endbuild -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.2/isotope.pkgd.min.js"></script>
     <!-- build:js({app,.tmp}) scripts/main.js -->
 
     <script src="scripts/Init.js"></script>
@@ -215,15 +206,38 @@
     <script src="scripts/_modules/InfoBar.js"></script>
     <script src="scripts/_modules/ItemManager.js"></script>
     <script src="scripts/_modules/ItemViewer.js"></script>
+    <script src="scripts/_modules/Item.js"></script>
     <script src="scripts/_modules/FilterManager.js"></script>
     <script src="scripts/_modules/Lightbox.js"></script>
     <script src="scripts/_modules/SnooperEyes.js"></script>
 
     <!-- endbuild -->
     <!--Template 'ITEM RESULTS'-->
-    <script id="item-template" type="text/x-handlebars-template">
-        <a href="#" data-id="" data-date="{{date}}"  data-likes="{{likes-count}}" data-comments="{{comments-count}}" class='result-item-wrapper' id="item{{id}}">
-            <div class="result-item {{extra-classes}}" style="background-image:url({{image}});">
+    <script id="itemInner-template" type="text/x-handlebars-template">
+        <div class="result-item__cover"><div class="result-item__cover__icon"><span class="icon icon--plus"></span></div></div>
+        <div class="result-item__header"><div class="result-item__header__title">{{title}}</div></div>
+        <div class="result-item__footer">
+            <div class="table-cell">
+                <div class="table">
+                    <div class="table-cell result-item__footer__icon result-item__footer__icon--likes"><span class="icon icon--likes"></span></div>
+                    <div class="table-cell result-item__footer__value">{{likes}}</div>
+                    <div class="table-cell result-item__footer__icon result-item__footer__icon--comments"><span class="icon icon--comments"></span></div>
+                    <div class="table-cell result-item__footer__value">{{comments}}</div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script id="itemWrapper-template" type="text/x-handlebars-template">
+        <a href="#" data-id="" data-date="{{date}}" data-keywords="{{keywords-count}}" data-likes="{{likes-count}}" data-comments="{{comments-count}}" class='result-item-wrapper' id="item{{id}}">
+            <div class="result-item {{extra-classes}}" style="">
+            </div>
+        </a>
+    </script>
+
+    <script id="itemFull-template" type="text/x-handlebars-template">
+        <a href="#" data-id="" data-date="{{date}}" data-keywords="{{keywords-count}}" data-likes="{{likes-count}}" data-comments="{{comments-count}}" class='result-item-wrapper' id="item{{id}}">
+            <div class="result-item {{extra-classes}}" style="">
                 <div class="result-item__cover"><div class="result-item__cover__icon"><span class="icon icon--plus"></span></div></div>
                 <div class="result-item__header"><div class="result-item__header__title">{{title}}</div></div>
                 <div class="result-item__footer">
